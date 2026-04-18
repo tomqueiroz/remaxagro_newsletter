@@ -8,6 +8,16 @@ import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { useNewsletterData } from "@/hooks/useNewsletterData";
 import { NewsletterPDF } from "./NewsletterPDF";
+import type { PDFImageUrls } from "./NewsletterPDF";
+
+function buildImageUrls(): PDFImageUrls {
+  const base = window.location.origin;
+  return {
+    logoWhite: `${base}/images/logo-white.png`,
+    hero:      `${base}/images/hero-agro-newsletter.png`,
+    selo:      `${base}/images/selo-corretor-certificado.png`,
+  };
+}
 
 interface Props {
   variant?: "header" | "footer";
@@ -20,7 +30,8 @@ export default function DownloadPDFButton({ variant = "header" }: Props) {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const blob = await pdf(<NewsletterPDF data={data} />).toBlob();
+      const images = buildImageUrls();
+      const blob = await pdf(<NewsletterPDF data={data} images={images} />).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

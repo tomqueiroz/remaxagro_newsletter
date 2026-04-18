@@ -8,7 +8,18 @@ import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { useNewsletterData } from "@/hooks/useNewsletterData";
 import { NewsletterPDF } from "./NewsletterPDF";
+import type { PDFImageUrls } from "./NewsletterPDF";
 import { generateNewsletterHTML } from "@/lib/generateNewsletterHTML";
+
+/** Constrói URLs absolutas para as imagens do PDF — necessário para @react-pdf/renderer no browser */
+function buildImageUrls(): PDFImageUrls {
+  const base = window.location.origin;
+  return {
+    logoWhite: `${base}/images/logo-white.png`,
+    hero:      `${base}/images/hero-agro-newsletter.png`,
+    selo:      `${base}/images/selo-corretor-certificado.png`,
+  };
+}
 
 // ─── PDF ─────────────────────────────────────────────────────────────────────
 
@@ -23,7 +34,8 @@ export function DownloadPDFButton({ variant = "header" }: DownloadPDFProps) {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const blob = await pdf(<NewsletterPDF data={data} />).toBlob();
+      const images = buildImageUrls();
+      const blob = await pdf(<NewsletterPDF data={data} images={images} />).toBlob();
       triggerDownload(
         blob,
         `REMAX-AGRO-Newsletter-Ed${data.editionNumber}-${data.lastUpdated.replace(/\//g, "-")}.pdf`

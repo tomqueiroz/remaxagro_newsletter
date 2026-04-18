@@ -30,6 +30,8 @@ import {
 } from "@react-pdf/renderer";
 import type { NewsletterData } from "@/hooks/useNewsletterData";
 
+// Imagens: passadas como props para suportar URLs absolutas em runtime (necessário para @react-pdf/renderer no browser)
+
 // ── Paleta ────────────────────────────────────────────────────────────────────
 const C = {
   navy:      "#0D1F35",
@@ -73,10 +75,8 @@ const S = StyleSheet.create({
   },
   inner: {
     backgroundColor: C.white,
-    maxWidth: 580,
-    marginHorizontal: "auto",
+    width: "100%",
     borderRadius: 10,
-    overflow: "hidden",
   },
 
   // ── Header ──
@@ -812,7 +812,8 @@ const S = StyleSheet.create({
     backgroundColor: C.navy,
     paddingHorizontal: 28,
     paddingVertical: 22,
-    borderRadius: "0 0 10px 10px",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   footerTopRow: {
     flexDirection: "row",
@@ -902,11 +903,18 @@ function SectionPill({ children }: { children: string }) {
 
 // ── NewsletterPDF (componente principal) ─────────────────────────────────────
 
-interface Props {
-  data: NewsletterData;
+export interface PDFImageUrls {
+  logoWhite: string;
+  hero: string;
+  selo: string;
 }
 
-export function NewsletterPDF({ data }: Props) {
+interface Props {
+  data: NewsletterData;
+  images: PDFImageUrls;
+}
+
+export function NewsletterPDF({ data, images }: Props) {
   const {
     editionNumber,
     editionDate,
@@ -942,7 +950,7 @@ export function NewsletterPDF({ data }: Props) {
             <View style={S.headerBg}>
               <View style={S.headerRow}>
                 <Image
-                  src="/images/logo-white.png"
+                  src={images.logoWhite}
                   style={S.headerLogoImg}
                 />
                 <View style={S.headerRight}>
@@ -961,7 +969,7 @@ export function NewsletterPDF({ data }: Props) {
 
             {/* ─── 2. HERO ───────────────────────────────────────────── */}
             <View style={S.heroBg}>
-              <Image src="/images/hero-agro-newsletter.jpg" style={S.heroImage} />
+              <Image src={images.hero} style={S.heroImage} />
               <View style={S.heroOverlay}>
                 <Text style={S.heroEyebrow}>✦ Safra 2025/26 · Inteligência Agro</Text>
                 <Text style={S.heroTitle}>O Agro que Transforma Propriedades em Patrimônio</Text>
@@ -1239,7 +1247,7 @@ export function NewsletterPDF({ data }: Props) {
             <View style={S.brokersBg}>
               <View style={S.brokersHeaderRow}>
                 <Link src="https://agro.remax.com.br/corretores-especializados/">
-                  <Image src="/images/selo-corretor-certificado.png" style={S.brokersSeloImg} />
+                  <Image src={images.selo} style={S.brokersSeloImg} />
                 </Link>
                 <View style={S.brokersHeaderText}>
                   <SectionPill>Corretores Certificados</SectionPill>
@@ -1297,7 +1305,7 @@ export function NewsletterPDF({ data }: Props) {
             {/* ─── 12. FOOTER LGPD ───────────────────────────────────── */}
             <View style={S.footerBg}>
               <View style={S.footerTopRow}>
-                <Image src="/images/logo-white.png" style={S.footerLogoImg} />
+                <Image src={images.logoWhite} style={S.footerLogoImg} />
                 <View style={S.footerSocials}>
                   {[
                     { label: "Instagram", url: "https://www.instagram.com/remaxcommercialdivsaoagro" },
