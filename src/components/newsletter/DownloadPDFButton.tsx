@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { useNewsletterData } from "@/hooks/useNewsletterData";
-import NewsletterPDF from "./NewsletterPDF";
+import { NewsletterPDF } from "./NewsletterPDF";
 
 interface Props {
   variant?: "header" | "footer";
