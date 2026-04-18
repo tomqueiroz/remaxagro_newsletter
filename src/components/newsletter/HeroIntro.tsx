@@ -126,14 +126,13 @@ export default function HeroIntro() {
                 Aqui você encontrará o resumo dos principais movimentos do agro na semana anterior, cotações atualizadas das principais culturas, análises de mercado de terras, insights sobre o que está por vir e a agenda dos eventos que você não pode perder.
               </p>
             </div>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-8 flex flex-col items-center justify-center gap-4">
               <img
                 src="/images/logo-color.png"
                 alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
-                className="h-10 object-contain"
+                className="h-28 md:h-32 object-contain"
               />
-              <div className="hidden sm:block w-px h-8 bg-[#C9A84C]/40"></div>
-              <p className="text-[#0F2A1A]/60 text-sm italic">
+              <p className="text-[#0F2A1A]/60 text-sm italic text-center">
                 "Informação estratégica para quem decide no campo."
               </p>
             </div>

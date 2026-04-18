@@ -3,9 +3,16 @@ import { useState } from "react";
 export default function SubscribeSection() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lgpdChecked, setLgpdChecked] = useState(false);
+  const [lgpdError, setLgpdError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!lgpdChecked) {
+      setLgpdError(true);
+      return;
+    }
+    setLgpdError(false);
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 800));
@@ -81,6 +88,35 @@ export default function SubscribeSection() {
                   <option value="profissional">Profissional do Agro</option>
                   <option value="outro">Outro</option>
                 </select>
+                {/* LGPD Checkbox */}
+                <div className={`rounded-xl border p-3 ${lgpdError ? "border-red-400 bg-red-50" : "border-[#d8d0c0] bg-white"}`}>
+                  <label className="flex items-start gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={lgpdChecked}
+                      onChange={(e) => {
+                        setLgpdChecked(e.target.checked);
+                        if (e.target.checked) setLgpdError(false);
+                      }}
+                      className="mt-0.5 w-4 h-4 accent-[#0F2A1A] cursor-pointer flex-shrink-0"
+                    />
+                    <span className="text-[#3a3a3a] text-xs leading-relaxed">
+                      Aceito os{" "}
+                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A] cursor-pointer">Termos de Uso</a>{" "}
+                      e a{" "}
+                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A] cursor-pointer">Política de Privacidade</a>.
+                      Consinto com o tratamento dos meus dados pela RE/MAX AGRO e DATAGRO, conforme a{" "}
+                      <strong>LGPD (Lei nº 13.709/2018)</strong>.
+                    </span>
+                  </label>
+                  {lgpdError && (
+                    <p className="text-red-600 text-xs mt-2 flex items-center gap-1">
+                      <i className="ri-error-warning-line"></i>
+                      Aceite os termos para continuar.
+                    </p>
+                  )}
+                </div>
+
                 <button
                   type="submit"
                   disabled={loading}
@@ -99,8 +135,9 @@ export default function SubscribeSection() {
                   )}
                 </button>
                 <p className="text-[#9a9a9a] text-xs text-center">
-                  Ao se inscrever, você concorda com nossa{" "}
-                  <a href="#" className="text-[#C9A84C] hover:underline cursor-pointer">Política de Privacidade</a>
+                  Dados protegidos pela{" "}
+                  <a href="#" className="text-[#C9A84C] hover:underline cursor-pointer">LGPD</a>.
+                  Cancele quando quiser.
                 </p>
               </form>
             )}

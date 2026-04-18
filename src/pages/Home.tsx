@@ -7,6 +7,8 @@ import NewsletterSidebar from "@/components/newsletter/NewsletterSidebar";
 import BrokersTeam from "@/components/newsletter/BrokersTeam";
 import SubscribeSection from "@/components/newsletter/SubscribeSection";
 import NewsletterFooter from "@/components/newsletter/NewsletterFooter";
+import LGPDConsentBanner from "@/components/newsletter/LGPDConsentBanner";
+import ExitIntentPopup from "@/components/newsletter/ExitIntentPopup";
 
 export default function Home() {
   return (
@@ -40,6 +42,8 @@ export default function Home() {
       </main>
 
       <NewsletterFooter />
+      <LGPDConsentBanner />
+      <ExitIntentPopup />
     </div>
   );
 }
