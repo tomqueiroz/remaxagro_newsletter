@@ -1,14 +1,14 @@
 export default function NewsletterFooter() {
   return (
-    <footer className="w-full bg-[#0F2A1A] mt-16">
+    <footer className="w-full bg-[#1a2e4a] mt-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
             <img
-              src="https://static.readdy.ai/image/dfee6440af39ac4a13c265c720bdb1dd/9bc5bdb2bd5663e3288ac7577013f051.png"
-              alt="RE/MAX AGRO powered by DATAGRO"
-              className="h-12 object-contain mb-4"
+              src="/images/logo-white.png"
+              alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
+              className="h-14 object-contain mb-4"
             />
             <p className="text-white/60 text-sm leading-relaxed">
               A newsletter semanal mais relevante do agronegócio brasileiro. Curadoria exclusiva da RE/MAX AGRO powered by DATAGRO para proprietários rurais, investidores e profissionais do setor.
@@ -81,7 +81,7 @@ export default function NewsletterFooter() {
         </div>
       </div>
 
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/20">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/40 text-xs text-center sm:text-left">
             © 2026 RE/MAX AGRO powered by DATAGRO · Todos os direitos reservados

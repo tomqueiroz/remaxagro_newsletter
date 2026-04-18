@@ -27,20 +27,10 @@ export default function NewsletterHeader() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <img
-              src="https://static.readdy.ai/image/dfee6440af39ac4a13c265c720bdb1dd/9bc5bdb2bd5663e3288ac7577013f051.png"
-              alt="RE/MAX AGRO powered by DATAGRO"
-              className="h-12 md:h-14 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-                const fallback = e.currentTarget.nextSibling as HTMLElement;
-                if (fallback) fallback.style.display = "flex";
-              }}
+              src="/images/logo-color.png"
+              alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
+              className="h-14 md:h-16 object-contain"
             />
-            <div className="hidden items-center gap-1" style={{display:"none"}}>
-              <span className="text-[#CC0000] font-black text-xl tracking-tight">RE/MAX</span>
-              <span className="text-[#0F2A1A] font-black text-xl tracking-tight">AGRO</span>
-              <span className="text-[#9a9a9a] text-xs ml-1">powered by DATAGRO</span>
-            </div>
             <div className="border-l border-[#CC0000]/30 pl-3">
               <p className="text-[#CC0000] text-xs font-semibold tracking-widest uppercase">Newsletter Semanal</p>
               <p className="text-[#1a2e4a]/60 text-xs mt-0.5">Edição Nº 001 · Segunda-feira</p>

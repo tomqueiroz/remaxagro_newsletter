@@ -52,6 +52,29 @@ export default function HeroIntro() {
           </div>
         </div>
 
+        {/* Scroll down arrow animado */}
+        <a
+          href="#cotacoes"
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 cursor-pointer group"
+          aria-label="Role para baixo"
+        >
+          <span
+            className="text-white/70 text-xs font-semibold uppercase tracking-widest group-hover:text-[#C9A84C] transition-colors"
+            style={{ letterSpacing: "0.2em" }}
+          >
+            Role para baixo
+          </span>
+          <span
+            className="flex flex-col items-center"
+            style={{
+              animation: "scrollArrow 1.6s ease-in-out infinite",
+            }}
+          >
+            <i className="ri-arrow-down-s-line text-[#C9A84C] text-3xl" style={{ lineHeight: 1 }}></i>
+            <i className="ri-arrow-down-s-line text-[#C9A84C]/50 text-2xl -mt-3" style={{ lineHeight: 1 }}></i>
+          </span>
+        </a>
+
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 bg-[#0F2A1A]/80 backdrop-blur-sm border-t border-[#C9A84C]/20">
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -105,9 +128,9 @@ export default function HeroIntro() {
             </div>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <img
-                src="https://static.readdy.ai/image/dfee6440af39ac4a13c265c720bdb1dd/9bc5bdb2bd5663e3288ac7577013f051.png"
-                alt="RE/MAX AGRO"
-                className="h-8 object-contain"
+                src="/images/logo-color.png"
+                alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
+                className="h-10 object-contain"
               />
               <div className="hidden sm:block w-px h-8 bg-[#C9A84C]/40"></div>
               <p className="text-[#0F2A1A]/60 text-sm italic">
