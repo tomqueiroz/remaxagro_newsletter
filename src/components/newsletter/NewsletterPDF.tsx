@@ -396,10 +396,6 @@ export default function NewsletterPDF({ data }: Props) {
         {/* Carta editorial */}
         <View style={s.editorialBox}>
           <View style={s.editorialInner}>
-            <View style={s.editorialSeloCol}>
-              <Image src="/images/selo-corretor-certificado.png" style={s.editorialSelo} />
-              <Text style={s.editorialSeloLabel}>Corretor Certificado{"\n"}RE/MAX Commercial</Text>
-            </View>
             <View style={s.editorialTextCol}>
               <Text style={s.editorialTag}>✦  Carta Editorial · Edição {data.editionNumber}</Text>
               <Text style={s.editorialTitle}>
@@ -409,7 +405,7 @@ export default function NewsletterPDF({ data }: Props) {
                 Bem-vindo à primeira edição da newsletter semanal mais relevante do agronegócio brasileiro. Com curadoria exclusiva da RE/MAX AGRO powered by DATAGRO — referência em inteligência agrícola há mais de 35 anos —, você recebe toda segunda-feira o que realmente importa para tomar as melhores decisões no campo.{"\n\n"}
                 Esta semana: safra recorde de soja, decisão do COPOM e janela estratégica de comercialização. Boa leitura.
               </Text>
-              <Text style={s.editorialSign}>Alexandre Trevizan</Text>
+              <Text style={s.editorialSign}>Gabriel Pesciallo</Text>
               <Text style={s.editorialRole}>CEO · RE/MAX AGRO</Text>
             </View>
           </View>
