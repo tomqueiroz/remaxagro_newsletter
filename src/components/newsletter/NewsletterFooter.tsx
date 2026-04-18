@@ -14,17 +14,17 @@ export default function NewsletterFooter() {
               A newsletter semanal mais relevante do agronegócio brasileiro. Curadoria exclusiva da RE/MAX AGRO powered by DATAGRO para proprietários rurais, investidores e profissionais do setor.
             </p>
             <div className="flex items-center gap-3 mt-5">
-              <a href="https://instagram.com" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer">
+              <a href="https://www.instagram.com/remaxcommercialdivsaoagro" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer" title="Instagram">
                 <i className="ri-instagram-line text-base"></i>
               </a>
-              <a href="https://linkedin.com" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer">
+              <a href="https://www.linkedin.com/company/remax-agro" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer" title="LinkedIn">
                 <i className="ri-linkedin-line text-base"></i>
               </a>
-              <a href="https://wa.me" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer">
-                <i className="ri-whatsapp-line text-base"></i>
+              <a href="https://www.facebook.com/remaxagro" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer" title="Facebook">
+                <i className="ri-facebook-line text-base"></i>
               </a>
-              <a href="https://youtube.com" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer">
-                <i className="ri-youtube-line text-base"></i>
+              <a href="https://wa.me/5511915051212" rel="nofollow" target="_blank" className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all duration-200 cursor-pointer" title="WhatsApp">
+                <i className="ri-whatsapp-line text-base"></i>
               </a>
             </div>
           </div>
@@ -54,14 +54,22 @@ export default function NewsletterFooter() {
           <div>
             <h4 className="text-[#C9A84C] text-sm font-bold uppercase tracking-wider mb-4">Contato</h4>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <i className="ri-map-pin-line text-[#C9A84C] text-sm mt-0.5"></i>
-                <span className="text-white/60 text-sm">Av. Paulista, 1374 · São Paulo, SP · Brasil</span>
+              <li className="flex items-center gap-2">
+                <i className="ri-phone-line text-[#C9A84C] text-sm"></i>
+                <a href="tel:+5511915051212" className="text-white/60 text-sm hover:text-[#C9A84C] transition-colors cursor-pointer">
+                  +55 (11) 91505-1212
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <i className="ri-whatsapp-line text-[#C9A84C] text-sm"></i>
+                <a href="https://wa.me/5511915051212" rel="nofollow" target="_blank" className="text-white/60 text-sm hover:text-[#C9A84C] transition-colors cursor-pointer">
+                  WhatsApp Central de Atendimento
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <i className="ri-mail-line text-[#C9A84C] text-sm"></i>
-                <a href="mailto:newsletter@remaxagro.com.br" className="text-white/60 text-sm hover:text-[#C9A84C] transition-colors cursor-pointer">
-                  newsletter@remaxagro.com.br
+                <a href="mailto:contatoagro@remax.com.br" className="text-white/60 text-sm hover:text-[#C9A84C] transition-colors cursor-pointer">
+                  contatoagro@remax.com.br
                 </a>
               </li>
               <li className="flex items-center gap-2">
