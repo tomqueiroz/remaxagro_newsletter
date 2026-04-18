@@ -1,807 +1,1367 @@
 /**
- * NewsletterPDF — v2
- * Layout magazine-style com sidebar, carta editorial, cotações, notícias,
- * insights, corretores, CTAs e rodapé LGPD completo.
+ * NewsletterPDF v3
+ * ─────────────────────────────────────────────────────────────────────────────
+ * PDF single-scroll, estilo magazine/e-mail, layout longo em uma "página".
  *
- * Estrutura de páginas:
- *  Página 1 — Capa (header full-color + editorial + cotações destacadas)
- *  Página 2 — Destaques (2 colunas: notícias principal + sidebar)
- *  Página 3 — Insights / Agenda + Corretores (2 colunas)
- *  Página 4 — Rodapé legal, CTAs, links, opt-out
+ * Estrutura (de cima para baixo):
+ *   1. Header       — navy bg, logo branca, título, edição, data
+ *   2. Hero         — imagem full-width, overlay escuro, CTA
+ *   3. Ticker       — faixa vermelha com cotações em linha
+ *   4. Editorial    — carta do CEO + box de stats
+ *   5. Cotações     — grid 4 colunas
+ *   6. Top Notícias — coluna principal + sidebar blog navy
+ *   7. Novidades    — 3 cards horizontais
+ *   8. Eventos      — insights + destaque AGRISHOW
+ *   9. Propriedades — 3 cards de imóveis rurais
+ *  10. Corretores   — selo + grid de corretores + link
+ *  11. CTA final    — faixa dourada
+ *  12. Footer LGPD  — navy bg, links legais
  */
 
 import {
   Document,
   Page,
-  Text,
   View,
+  Text,
   Image,
   Link,
   StyleSheet,
+  Font,
 } from "@react-pdf/renderer";
 import type { NewsletterData } from "@/hooks/useNewsletterData";
 
-// ─── Paleta ──────────────────────────────────────────────────────────────────
+// ── Paleta ────────────────────────────────────────────────────────────────────
 const C = {
+  navy:      "#0D1F35",
+  navyDark:  "#060F1A",
+  navyMid:   "#1a2e4a",
+  navyLight: "#1E3A5F",
   green:     "#0F2A1A",
-  greenMid:  "#1A4A2A",
   gold:      "#C9A84C",
-  goldBg:    "#F5F0E8",
-  goldLight: "#FBF7EE",
+  goldLight: "#F0D890",
   red:       "#CC0000",
-  navy:      "#1a2e4a",
-  navyLight: "#243d5c",
   white:     "#FFFFFF",
-  offWhite:  "#FAFAF8",
-  gray1:     "#F3F0EA",
-  gray2:     "#E4DDD0",
-  gray3:     "#9A9A9A",
-  gray4:     "#5A5A5A",
-  gray5:     "#2A2A2A",
-  emerald:   "#059669",
-  rose:      "#DC2626",
-  amber:     "#D97706",
+  offWhite:  "#FBF6EC",
+  bgLight:   "#F4F1EB",
+  gray:      "#5A5A5A",
+  grayLight: "#9A9A9A",
+  success:   "#059669",
+  info:      "#0284C7",
+  warning:   "#D97706",
+  text:      "#1E1E1E",
+  border:    "#E4DDD0",
 };
 
-// ─── Margens & métricas ───────────────────────────────────────────────────────
-const M = { h: 26, v: 22, gutter: 10 };
+// ── Fontes ────────────────────────────────────────────────────────────────────
+// Usando Helvetica (built-in) para compatibilidade máxima com react-pdf
+Font.registerHyphenationCallback((word) => [word]);
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
-const s = StyleSheet.create({
-
-  // Páginas
-  page: { fontFamily: "Helvetica", backgroundColor: C.white },
-  pagePad: { paddingHorizontal: M.h, paddingBottom: 36 },
-
-  // ── CAPA header verde-escuro ─────────────────────────────────────────────
-  coverHeader: {
-    backgroundColor: C.green,
-    paddingHorizontal: M.h,
-    paddingTop: 18,
-    paddingBottom: 14,
+// ── Estilos ───────────────────────────────────────────────────────────────────
+const S = StyleSheet.create({
+  // Layout
+  page: {
+    backgroundColor: "#ECEAE4",
+    paddingTop: 0,
+    paddingBottom: 0,
+    fontFamily: "Helvetica",
   },
-  coverTopRow: {
+  outer: {
+    backgroundColor: "#ECEAE4",
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+  },
+  inner: {
+    backgroundColor: C.white,
+    maxWidth: 580,
+    marginHorizontal: "auto",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+
+  // ── Header ──
+  headerTopBar: {
+    backgroundColor: C.gold,
+    height: 3,
+  },
+  headerBg: {
+    backgroundColor: C.navy,
+    paddingHorizontal: 28,
+    paddingVertical: 18,
+  },
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10,
   },
-  coverLogo: { width: 150, height: 50, objectFit: "contain" },
-  coverEditionBox: { alignItems: "flex-end" },
-  coverEditionNum: { color: C.gold, fontSize: 9, fontFamily: "Helvetica-Bold", letterSpacing: 1.5, textTransform: "uppercase" },
-  coverDate: { color: "#FFFFFFAA", fontSize: 8, marginTop: 2 },
-
-  // Linha dourada divisória
-  goldLine: { height: 3, backgroundColor: C.gold },
-
-  // Ticker vermelho
-  ticker: {
-    backgroundColor: C.red,
+  headerLogoImg: {
+    width: 180,
+    height: 59,
+    objectFit: "contain",
+    objectPositionX: "left",
+  },
+  headerRight: {
+    alignItems: "flex-end",
+  },
+  headerLabel: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginBottom: 2,
+  },
+  headerEdition: {
+    fontSize: 13,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  headerDate: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.55)",
+  },
+  headerNavBar: {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+    paddingHorizontal: 28,
+    paddingVertical: 7,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 5,
-    paddingHorizontal: M.h,
   },
-  tickerLabel: { color: C.white, fontSize: 6.5, fontFamily: "Helvetica-Bold", letterSpacing: 1.2, marginRight: 8, textTransform: "uppercase" },
-  tickerText:  { color: "#FFD0D0", fontSize: 6.5, flex: 1 },
+  headerNavLink: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.65)",
+    marginRight: 14,
+  },
+  headerNavLinkGold: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+  },
 
-  // ── CARTA EDITORIAL (capa) ────────────────────────────────────────────────
-  editorialBox: {
-    backgroundColor: C.green,
-    paddingHorizontal: M.h,
-    paddingVertical: 16,
-    borderBottom: `3pt solid ${C.gold}`,
+  // ── Hero ──
+  heroBg: {
+    backgroundColor: C.navy,
+    minHeight: 240,
+    position: "relative",
   },
-  editorialInner: {
+  heroImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    opacity: 0.35,
+  },
+  heroOverlay: {
+    paddingHorizontal: 32,
+    paddingVertical: 36,
+  },
+  heroEyebrow: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginBottom: 8,
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    lineHeight: 1.3,
+    marginBottom: 10,
+    maxWidth: 360,
+  },
+  heroSubtitle: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.78)",
+    lineHeight: 1.6,
+    marginBottom: 20,
+    maxWidth: 320,
+  },
+  heroCta: {
+    backgroundColor: C.gold,
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingVertical: 10,
+    alignSelf: "flex-start",
+  },
+  heroCtaText: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+    letterSpacing: 0.3,
+  },
+
+  // ── Ticker ──
+  tickerBg: {
+    backgroundColor: C.red,
+    paddingHorizontal: 28,
+    paddingVertical: 8,
     flexDirection: "row",
-    gap: 16,
+    alignItems: "center",
+  },
+  tickerBadge: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginRight: 10,
+  },
+  tickerBadgeText: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    letterSpacing: 0.5,
+  },
+  tickerItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  tickerName: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginRight: 3,
+  },
+  tickerUp: { fontSize: 9, color: "#6EE7B7" },
+  tickerDown: { fontSize: 9, color: "#FCA5A5" },
+  tickerDot: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.25)",
+    marginHorizontal: 4,
+  },
+
+  // ── Section divider ──
+  goldBar: { backgroundColor: C.gold, height: 3 },
+  navyBar: { backgroundColor: C.navy, height: 3 },
+  hr: { borderTopWidth: 1, borderTopColor: C.border, marginVertical: 10 },
+
+  // ── Section pill ──
+  pill: {
+    backgroundColor: C.gold,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: "flex-start",
+    marginBottom: 8,
+  },
+  pillText: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    marginTop: 6,
+    marginBottom: 14,
+    lineHeight: 1.3,
+  },
+  sectionTitleWhite: {
+    fontSize: 18,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginTop: 6,
+    marginBottom: 4,
+    lineHeight: 1.3,
+  },
+
+  // ── Editorial ──
+  editorialBg: {
+    backgroundColor: C.green,
+    paddingHorizontal: 28,
+    paddingVertical: 24,
+    flexDirection: "row",
     alignItems: "flex-start",
   },
-  editorialSeloCol: { width: 70, alignItems: "center", flexShrink: 0 },
-  editorialSelo: { width: 68, height: 68, objectFit: "contain" },
-  editorialSeloLabel: { color: C.gold, fontSize: 6, textAlign: "center", marginTop: 4, letterSpacing: 0.5 },
-  editorialTextCol: { flex: 1 },
-  editorialTag:   { color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 4 },
-  editorialTitle: { color: C.white, fontSize: 15, fontFamily: "Helvetica-Bold", lineHeight: 1.35, marginBottom: 6 },
-  editorialBody:  { color: "#FFFFFFCC", fontSize: 8, lineHeight: 1.65 },
-  editorialSign:  { color: C.gold, fontSize: 7.5, fontFamily: "Helvetica-Bold", marginTop: 8 },
-  editorialRole:  { color: "#FFFFFF80", fontSize: 7, marginTop: 1 },
+  editorialLeft: { flex: 1, marginRight: 14 },
+  editorialEyebrow: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginBottom: 6,
+  },
+  editorialTitle: {
+    fontSize: 17,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginBottom: 10,
+    lineHeight: 1.35,
+  },
+  editorialBody: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.78)",
+    lineHeight: 1.7,
+    marginBottom: 8,
+  },
+  editorialCeo: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+  },
+  editorialStatsBox: {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 8,
+    borderLeftWidth: 2,
+    borderLeftColor: C.gold,
+    padding: 12,
+    width: 140,
+  },
+  statLabel: { fontSize: 8, color: "rgba(255,255,255,0.45)", marginBottom: 2 },
+  statValue: {
+    fontSize: 18,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    marginBottom: 2,
+  },
+  statSub: { fontSize: 8, color: "rgba(255,255,255,0.5)", marginBottom: 10 },
+  statHr: {
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+    marginBottom: 10,
+  },
 
-  // ── COTAÇÕES DESTAQUE (capa, row) ─────────────────────────────────────────
-  quoteRow: {
+  // ── Cotações ──
+  quotesBg: {
+    backgroundColor: C.offWhite,
+    paddingHorizontal: 28,
+    paddingVertical: 22,
+  },
+  quotesGrid: {
     flexDirection: "row",
-    gap: 6,
-    paddingHorizontal: M.h,
-    paddingVertical: 12,
-    backgroundColor: C.goldBg,
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 10,
   },
   quoteCard: {
     flex: 1,
+    minWidth: 120,
     backgroundColor: C.white,
-    borderRadius: 6,
-    padding: 9,
-    borderTop: `3pt solid ${C.gold}`,
+    borderRadius: 8,
+    borderBottomWidth: 3,
+    borderBottomColor: C.gold,
+    padding: 12,
     alignItems: "center",
   },
-  quoteName:   { color: C.gray4, fontSize: 6.5, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3 },
-  quoteValue:  { color: C.green, fontSize: 12, fontFamily: "Helvetica-Bold", lineHeight: 1 },
-  quoteUnit:   { color: C.gray3, fontSize: 6, marginTop: 1 },
-  quoteUp:     { color: C.emerald, fontSize: 7, fontFamily: "Helvetica-Bold", marginTop: 4 },
-  quoteDown:   { color: C.rose,    fontSize: 7, fontFamily: "Helvetica-Bold", marginTop: 4 },
-  quoteSource: { color: C.gray3, fontSize: 6.5, paddingHorizontal: M.h, paddingBottom: 6, paddingTop: 2, backgroundColor: C.goldBg },
-
-  // ── 2 COLUNAS (main + sidebar) ────────────────────────────────────────────
-  twoCol: { flexDirection: "row", gap: M.gutter, marginTop: M.v },
-  mainCol: { flex: 62 },
-  sideCol: { flex: 34 },
-
-  // ── Section title ─────────────────────────────────────────────────────────
-  secTag: {
-    backgroundColor: C.gold,
-    color: C.green,
-    fontSize: 6.5,
+  quoteName: {
+    fontSize: 8,
     fontFamily: "Helvetica-Bold",
-    letterSpacing: 1.2,
-    paddingHorizontal: 9,
-    paddingVertical: 2.5,
-    borderRadius: 20,
-    alignSelf: "flex-start",
-    marginBottom: 5,
+    color: C.gray,
     textTransform: "uppercase",
+    letterSpacing: 0.4,
+    marginBottom: 4,
   },
-  secTitle: { color: C.green, fontSize: 15, fontFamily: "Helvetica-Bold", lineHeight: 1.3, marginBottom: 10 },
-  secTitleWhite: { color: C.white, fontSize: 15, fontFamily: "Helvetica-Bold", lineHeight: 1.3, marginBottom: 10 },
+  quoteValue: {
+    fontSize: 18,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    marginBottom: 2,
+  },
+  quoteUnit: { fontSize: 8, color: C.grayLight, marginBottom: 4 },
+  quoteUp: { fontSize: 11, fontFamily: "Helvetica-Bold", color: "#059669" },
+  quoteDown: { fontSize: 11, fontFamily: "Helvetica-Bold", color: "#DC2626" },
+  quoteRegion: { fontSize: 8, color: C.grayLight },
+  quotesMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+    paddingTop: 8,
+  },
+  quoteMetaText: { fontSize: 9, color: C.grayLight },
 
-  // ── Notícia principal ─────────────────────────────────────────────────────
-  newsCardMain: {
-    backgroundColor: C.gray1,
+  // ── Notícias ──
+  newsBg: { backgroundColor: "#F4F1EB", paddingHorizontal: 28, paddingVertical: 22 },
+  newsRow: { flexDirection: "row", alignItems: "flex-start" },
+  newsMain: { flex: 1, marginRight: 12 },
+  newsSidebar: { width: 168, flexShrink: 0 },
+  newsCard: {
+    backgroundColor: C.white,
     borderRadius: 8,
-    overflow: "hidden",
+    borderLeftWidth: 4,
+    borderLeftColor: C.gold,
+    padding: 14,
     marginBottom: 10,
-    borderLeft: `4pt solid ${C.gold}`,
   },
-  newsCardMainBody: { padding: 11 },
-  newsMainCat:     { color: C.gold, fontSize: 6.5, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 },
-  newsMainTitle:   { color: C.green, fontSize: 10.5, fontFamily: "Helvetica-Bold", lineHeight: 1.4, marginBottom: 5 },
-  newsMainSummary: { color: C.gray4, fontSize: 8, lineHeight: 1.55, marginBottom: 7 },
-  newsMainFooter:  { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  newsDate:        { color: C.gray3, fontSize: 7 },
-  newsReadLink:    { color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", textDecoration: "underline" },
+  newsCategory: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 4,
+  },
+  newsTitle: {
+    fontSize: 14,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    lineHeight: 1.4,
+    marginBottom: 7,
+  },
+  newsSummary: { fontSize: 11, color: C.gray, lineHeight: 1.65, marginBottom: 10 },
+  newsMeta: { flexDirection: "row", alignItems: "center" },
+  newsDate: { fontSize: 9, color: C.grayLight, marginRight: 10 },
+  newsLink: { fontSize: 9, fontFamily: "Helvetica-Bold", color: C.gold },
 
-  // ── Notícias secundárias ─────────────────────────────────────────────────
-  secNewsBox: { backgroundColor: C.gray1, borderRadius: 8, overflow: "hidden" },
-  secNewsHeader: { backgroundColor: C.green, paddingHorizontal: 10, paddingVertical: 5 },
-  secNewsHeaderText: { color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase" },
-  secNewsRow: { flexDirection: "row", alignItems: "flex-start", paddingHorizontal: 10, paddingVertical: 7, borderBottom: `1pt solid ${C.gray2}`, gap: 6 },
-  secNewsBullet: { width: 4, height: 4, borderRadius: 2, backgroundColor: C.gold, marginTop: 3, flexShrink: 0 },
-  secNewsCat:    { color: C.gold, fontSize: 6, fontFamily: "Helvetica-Bold", letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 2 },
-  secNewsTitle:  { color: C.gray5, fontSize: 7.5, lineHeight: 1.4 },
-  secNewsDate:   { color: C.gray3, fontSize: 6.5, marginTop: 2 },
-
-  // ── SIDEBAR ───────────────────────────────────────────────────────────────
-  sidebarBox: {
-    backgroundColor: C.navy,
+  // Sidebar
+  sidebarBg: {
+    backgroundColor: C.navyMid,
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 10,
   },
   sidebarHeader: {
     backgroundColor: C.gold,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  sidebarHeaderText: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  sidebarItem: {
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.07)",
     flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  sidebarDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: C.gold,
+    marginTop: 3,
+    marginRight: 7,
+    flexShrink: 0,
+  },
+  sidebarItemContent: { flex: 1 },
+  sidebarCat: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+    marginBottom: 2,
+  },
+  sidebarTitle: { fontSize: 10, color: C.white, lineHeight: 1.45, marginBottom: 2 },
+  sidebarDate: { fontSize: 9, color: "rgba(255,255,255,0.38)" },
+  sidebarCta: {
+    margin: 10,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
     alignItems: "center",
-    gap: 5,
   },
-  sidebarHeaderIcon: { color: C.green, fontSize: 8 },
-  sidebarHeaderText: { color: C.green, fontSize: 7, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase" },
-  sidebarBody: { padding: 10 },
-
-  // Propriedade em destaque (sidebar)
-  propCard: {
-    backgroundColor: "#FFFFFF12",
-    borderRadius: 6,
-    padding: 9,
-    marginBottom: 8,
-    borderLeft: `3pt solid ${C.gold}`,
+  sidebarCtaText: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
   },
-  propLabel:  { color: C.gold, fontSize: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 },
-  propTitle:  { color: C.white, fontSize: 8.5, fontFamily: "Helvetica-Bold", lineHeight: 1.4, marginBottom: 2 },
-  propSub:    { color: "#FFFFFF80", fontSize: 7, marginBottom: 4 },
-  propDetail: { color: "#FFFFFFCC", fontSize: 7, lineHeight: 1.5 },
-  propBadge:  { backgroundColor: C.emerald, alignSelf: "flex-start", borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginBottom: 5 },
-  propBadgeText: { color: C.white, fontSize: 6, fontFamily: "Helvetica-Bold" },
-
-  // Dica rápida (sidebar)
-  tipBox: {
-    backgroundColor: "#FFFFFF0D",
-    borderRadius: 6,
-    padding: 9,
-    marginBottom: 8,
-  },
-  tipLabel: { color: "#FFFFFFAA", fontSize: 6, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 },
-  tipText:  { color: C.white, fontSize: 7.5, lineHeight: 1.55 },
-
-  // CTA sidebar (botão grande)
-  sidebarCTA: {
+  whatsappBox: {
     backgroundColor: C.red,
-    borderRadius: 6,
-    padding: 10,
+    borderRadius: 8,
+    padding: 14,
     alignItems: "center",
+  },
+  whatsappTitle: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginBottom: 2,
+    textAlign: "center",
+  },
+  whatsappSub: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.72)",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  whatsappBtn: {
+    backgroundColor: C.white,
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 7,
     marginBottom: 6,
   },
-  sidebarCTATitle: { color: C.white, fontSize: 8, fontFamily: "Helvetica-Bold", textAlign: "center", marginBottom: 3 },
-  sidebarCTASub:   { color: "#FFFFFF99", fontSize: 6.5, textAlign: "center", marginBottom: 7 },
-  sidebarCTABtn:   { backgroundColor: C.white, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4 },
-  sidebarCTABtnText: { color: C.red, fontSize: 7, fontFamily: "Helvetica-Bold" },
+  whatsappBtnText: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: C.red,
+  },
+  whatsappPhone: { fontSize: 9, color: C.gold },
 
-  // Redes (sidebar)
-  socialRow: { flexDirection: "row", gap: 5, marginTop: 5 },
-  socialChip: { backgroundColor: "#FFFFFF15", borderRadius: 4, paddingHorizontal: 7, paddingVertical: 3, flex: 1, alignItems: "center" },
-  socialChipText: { color: C.white, fontSize: 6.5 },
+  // ── Novidades 3 cards ──
+  novidadesBg: { backgroundColor: C.white, paddingHorizontal: 28, paddingVertical: 22 },
+  novidadesGrid: { flexDirection: "row", gap: 8 },
+  novidadeCard: {
+    flex: 1,
+    backgroundColor: C.bgLight,
+    borderRadius: 8,
+    overflow: "hidden",
+    borderTopWidth: 3,
+  },
+  novidadeCardBody: { padding: 12 },
+  novidadeEmoji: { fontSize: 18, marginBottom: 5 },
+  novidadeCat: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+    marginBottom: 4,
+  },
+  novidadeTitle: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    lineHeight: 1.4,
+    marginBottom: 5,
+  },
+  novidadeBody: { fontSize: 9, color: C.gray, lineHeight: 1.55, marginBottom: 4 },
+  novidadeDate: { fontSize: 9, color: C.grayLight },
 
-  // ── INSIGHTS ─────────────────────────────────────────────────────────────
+  // ── Eventos ──
+  eventosBg: { backgroundColor: C.offWhite, paddingHorizontal: 28, paddingVertical: 22 },
   insightCard: {
-    borderRadius: 7,
-    padding: 10,
+    backgroundColor: "#FBF6EC",
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: C.navy,
+    padding: 12,
     marginBottom: 8,
-    backgroundColor: C.goldBg,
-    borderLeft: `3pt solid ${C.navy}`,
   },
-  insightHead: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 3 },
-  insightTitle: { color: C.green, fontSize: 9, fontFamily: "Helvetica-Bold", lineHeight: 1.4, flex: 1, marginRight: 8 },
-  insightDate:  { color: C.gray3, fontSize: 6.5, flexShrink: 0 },
-  insightDesc:  { color: C.gray4, fontSize: 7.5, lineHeight: 1.55 },
-  badgeRow: { flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 4 },
-  badgeAlta:    { backgroundColor: "#FEE2E2", color: "#B91C1C", fontSize: 6, fontFamily: "Helvetica-Bold", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10 },
-  badgeMedia:   { backgroundColor: "#FEF3C7", color: "#92400E", fontSize: 6, fontFamily: "Helvetica-Bold", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10 },
-  badgeEvento:  { backgroundColor: "#D1FAE5", color: "#065F46", fontSize: 6, fontFamily: "Helvetica-Bold", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10 },
-
-  // ── CORRETORES ────────────────────────────────────────────────────────────
-  brokerGrid: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 8 },
-  brokerCard: {
-    width: "47.8%",
-    backgroundColor: C.green,
-    borderRadius: 7,
-    padding: 9,
-  },
-  brokerName:   { color: C.white, fontSize: 8.5, fontFamily: "Helvetica-Bold", marginBottom: 2 },
-  brokerRole:   { color: C.gold, fontSize: 7, marginBottom: 1 },
-  brokerRegion: { color: "#FFFFFF66", fontSize: 6.5, marginBottom: 6 },
-  brokerWaBtn:  { backgroundColor: C.emerald, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, alignSelf: "flex-start" },
-  brokerWaText: { color: C.white, fontSize: 6.5, fontFamily: "Helvetica-Bold" },
-
-  // ── CTA BANNER (página 3) ─────────────────────────────────────────────────
-  ctaBanner: {
-    backgroundColor: C.navy,
+  insightBadgeRow: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  insightBadge: {
     borderRadius: 10,
-    padding: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginRight: 8,
+  },
+  insightBadgeText: { fontSize: 8, fontFamily: "Helvetica-Bold" },
+  insightDate: { fontSize: 8, color: C.grayLight },
+  insightTitle: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    lineHeight: 1.4,
+    marginBottom: 4,
+  },
+  insightDesc: { fontSize: 10, color: C.gray, lineHeight: 1.6 },
+  agrishowBox: {
+    backgroundColor: C.navy,
+    borderRadius: 8,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  agrishowLeft: { flex: 1 },
+  agrishowEye: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  agrishowTitle: {
+    fontSize: 13,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginBottom: 2,
+  },
+  agrishowSub: { fontSize: 10, color: "rgba(255,255,255,0.55)" },
+  agrishowCta: {
+    backgroundColor: C.gold,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  agrishowCtaText: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+  },
+
+  // ── Propriedades ──
+  propsBg: { backgroundColor: C.bgLight, paddingHorizontal: 28, paddingVertical: 22 },
+  propsRow: { flexDirection: "row", gap: 8 },
+  propCardMain: {
+    flex: 6,
+    backgroundColor: C.white,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  propCardMainImage: {
+    backgroundColor: C.green,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  propCardMainImageText: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: "rgba(255,255,255,0.5)",
+  },
+  propCardMainBody: { padding: 14 },
+  propBadge: {
+    alignSelf: "flex-start",
+    borderRadius: 10,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    marginBottom: 8,
+  },
+  propBadgeText: { fontSize: 8, fontFamily: "Helvetica-Bold", color: C.white },
+  propTitle: {
+    fontSize: 14,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    marginBottom: 3,
+    lineHeight: 1.35,
+  },
+  propSub: { fontSize: 10, color: C.grayLight, marginBottom: 6 },
+  propDesc: { fontSize: 11, color: C.gray, lineHeight: 1.55, marginBottom: 12 },
+  propCta: {
+    backgroundColor: C.gold,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    alignSelf: "flex-start",
+  },
+  propCtaText: { fontSize: 10, fontFamily: "Helvetica-Bold", color: C.navy },
+
+  propSideStack: { flex: 4, gap: 8 },
+  propCardSmall: {
+    flex: 1,
+    backgroundColor: C.white,
+    borderRadius: 8,
+    padding: 12,
+  },
+  propSmallBadge: {
+    alignSelf: "flex-start",
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 6,
+  },
+  propSmallTitle: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.text,
+    marginBottom: 2,
+    lineHeight: 1.35,
+  },
+  propSmallSub: { fontSize: 9, color: C.grayLight, marginBottom: 4 },
+  propSmallDesc: { fontSize: 10, color: C.gray, lineHeight: 1.5, marginBottom: 8 },
+  propSmallLink: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+  },
+  propsVerTodas: { marginTop: 10, alignItems: "center" },
+  propsVerTodasLink: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+    textDecoration: "underline",
+  },
+
+  // ── Corretores ──
+  brokersBg: {
+    backgroundColor: C.navyMid,
+    paddingHorizontal: 28,
+    paddingVertical: 22,
+  },
+  brokersHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  brokersSeloImg: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 16,
+    objectFit: "contain",
+  },
+  brokersHeaderText: { flex: 1 },
+  brokersLink: {
+    fontSize: 10,
+    color: C.gold,
+    textDecoration: "underline",
+  },
+  brokersGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 14 },
+  brokerCard: {
+    flex: 1,
+    minWidth: 230,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: C.gold,
+    padding: 12,
+  },
+  brokerName: {
+    fontSize: 13,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginBottom: 2,
+  },
+  brokerRole: { fontSize: 10, color: C.gold, marginBottom: 2 },
+  brokerRegion: { fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 10 },
+  brokerWaBtn: {
+    backgroundColor: C.success,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+    alignSelf: "flex-start",
+  },
+  brokerWaBtnText: { fontSize: 9, fontFamily: "Helvetica-Bold", color: C.white },
+  brokersCta: {
+    backgroundColor: "rgba(255,255,255,0.07)",
+    borderRadius: 8,
+    borderTopWidth: 2,
+    borderTopColor: C.gold,
+    padding: 13,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  brokersCtaLeft: { flex: 1 },
+  brokersCtaTitle: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: C.white,
+    marginBottom: 2,
+  },
+  brokersCtaSub: { fontSize: 9, color: "rgba(255,255,255,0.45)" },
+  brokersCtaBtn: {
+    backgroundColor: C.gold,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  brokersCtaBtnText: { fontSize: 10, fontFamily: "Helvetica-Bold", color: C.navy },
+
+  // ── CTA final ──
+  ctaBg: {
+    backgroundColor: C.gold,
+    paddingHorizontal: 32,
+    paddingVertical: 28,
+    alignItems: "center",
+  },
+  ctaTitle: {
+    fontSize: 20,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+    textAlign: "center",
+    lineHeight: 1.3,
+    marginBottom: 8,
+  },
+  ctaSub: {
+    fontSize: 12,
+    color: "rgba(13,31,53,0.7)",
+    textAlign: "center",
+    marginBottom: 18,
+  },
+  ctaBtns: { flexDirection: "row", gap: 10 },
+  ctaBtnPrimary: {
+    backgroundColor: C.navy,
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingVertical: 11,
+  },
+  ctaBtnPrimaryText: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+  },
+  ctaBtnOutline: {
+    borderWidth: 2,
+    borderColor: C.navy,
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingVertical: 9,
+  },
+  ctaBtnOutlineText: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: C.navy,
+  },
+
+  // ── Footer ──
+  footerBg: {
+    backgroundColor: C.navy,
+    paddingHorizontal: 28,
+    paddingVertical: 22,
+    borderRadius: "0 0 10px 10px",
+  },
+  footerTopRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 14,
+    marginBottom: 18,
   },
-  ctaLeft: { flex: 1 },
-  ctaTag:   { color: C.gold, fontSize: 6.5, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 },
-  ctaTitle: { color: C.white, fontSize: 12, fontFamily: "Helvetica-Bold", lineHeight: 1.4 },
-  ctaSub:   { color: "#FFFFFF70", fontSize: 7.5, marginTop: 3 },
-  ctaBtn:   { backgroundColor: C.gold, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 7, marginLeft: 14 },
-  ctaBtnText: { color: C.green, fontSize: 8, fontFamily: "Helvetica-Bold" },
-
-  // ── FOOTER PAGE (página 4) ────────────────────────────────────────────────
-  footerPage: { backgroundColor: C.green, flex: 1 },
-  footerTop: { paddingHorizontal: M.h, paddingTop: 20, paddingBottom: 14 },
-  footerLogoRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 },
-  footerLogo: { width: 130, height: 44, objectFit: "contain" },
+  footerLogoImg: {
+    width: 150,
+    height: 49,
+    objectFit: "contain",
+    objectPositionX: "left",
+  },
   footerSocials: { flexDirection: "row", gap: 6 },
-  footerSocialChip: { backgroundColor: "#FFFFFF18", borderRadius: 5, paddingHorizontal: 9, paddingVertical: 4 },
-  footerSocialText: { color: C.white, fontSize: 7 },
-
-  footerGrid: { flexDirection: "row", gap: 16, marginBottom: 16 },
-  footerCol: { flex: 1 },
-  footerColTitle: { color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 7 },
-  footerItem: { flexDirection: "row", alignItems: "flex-start", gap: 5, marginBottom: 5 },
-  footerDot: { width: 3, height: 3, borderRadius: 2, backgroundColor: C.gold, marginTop: 2.5, flexShrink: 0 },
-  footerLink: { color: "#FFFFFFCC", fontSize: 7.5, textDecoration: "underline" },
-  footerText: { color: "#FFFFFFCC", fontSize: 7.5 },
-
-  footerDivider: { height: 1, backgroundColor: "#FFFFFF20", marginHorizontal: M.h, marginBottom: 12 },
-
-  legalBox: { paddingHorizontal: M.h, marginBottom: 12 },
-  legalTitle: { color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", letterSpacing: 0.8, marginBottom: 5 },
-  legalText:  { color: "#FFFFFF70", fontSize: 6.5, lineHeight: 1.7 },
-
-  optOutRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, paddingHorizontal: M.h, marginBottom: 14 },
-  optOutLink: { color: "#FFFFFFBB", fontSize: 7, textDecoration: "underline" },
-  optOutSep:  { color: "#FFFFFF30", fontSize: 7 },
-
-  footerCopy: { color: "#FFFFFF40", fontSize: 6.5, paddingHorizontal: M.h, paddingBottom: 14 },
-
-  // ── Page number ───────────────────────────────────────────────────────────
-  pageNum: {
-    position: "absolute",
-    bottom: 10,
-    right: M.h,
-    color: C.gray3,
-    fontSize: 7,
+  footerSocialBtn: {
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  divider: { height: 1, backgroundColor: C.gray2, marginVertical: 12 },
-  dividerGold: { height: 2, backgroundColor: C.gold, marginVertical: 12 },
+  footerSocialText: { fontSize: 9, color: C.white },
+  footerCols: { flexDirection: "row", gap: 16, marginBottom: 16 },
+  footerCol: { flex: 1 },
+  footerColTitle: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 7,
+  },
+  footerColLink: {
+    fontSize: 10,
+    color: "rgba(255,255,255,0.6)",
+    marginBottom: 4,
+    textDecoration: "underline",
+  },
+  footerHr: {
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.12)",
+    marginBottom: 12,
+  },
+  footerLgpdTitle: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.gold,
+    marginBottom: 5,
+  },
+  footerLgpdText: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.48)",
+    lineHeight: 1.65,
+    marginBottom: 12,
+  },
+  footerLinksRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 12,
+  },
+  footerOptLink: {
+    fontSize: 9,
+    color: "rgba(255,255,255,0.6)",
+    textDecoration: "underline",
+  },
+  footerDot: { fontSize: 9, color: "rgba(255,255,255,0.2)" },
+  footerCopy: {
+    fontSize: 8,
+    color: "rgba(255,255,255,0.25)",
+    lineHeight: 1.6,
+  },
 });
 
-// ─── Componentes auxiliares ───────────────────────────────────────────────────
+// ── Componentes menores ────────────────────────────────────────────────────────
 
-function SecHead({ tag, title, white = false }: { tag: string; title: string; white?: boolean }) {
+function GoldBar() {
+  return <View style={S.goldBar} />;
+}
+
+function SectionPill({ children }: { children: string }) {
   return (
-    <View>
-      <Text style={s.secTag}>{tag}</Text>
-      <Text style={white ? s.secTitleWhite : s.secTitle}>{title}</Text>
+    <View style={S.pill}>
+      <Text style={S.pillText}>{children}</Text>
     </View>
   );
 }
 
-function PageNum() {
-  return (
-    <Text
-      style={s.pageNum}
-      render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
-      fixed
-    />
-  );
+// ── NewsletterPDF (componente principal) ─────────────────────────────────────
+
+interface Props {
+  data: NewsletterData;
 }
 
-// ─── Componente principal ────────────────────────────────────────────────────
+export function NewsletterPDF({ data }: Props) {
+  const {
+    editionNumber,
+    editionDate,
+    lastUpdated,
+    quotations,
+    mainNews,
+    secondaryNews,
+    insights,
+    brokers,
+  } = data;
 
-interface Props { data: NewsletterData }
-
-export default function NewsletterPDF({ data }: Props) {
-
-  const tickerStr = data.quotations
-    .map(q => `${q.name}: ${q.value}/${q.unit} ${q.change >= 0 ? "▲" : "▼"}${Math.abs(q.change)}%`)
-    .join("    ·    ");
-
-  // Cotações destaque: apenas as 4 principais para a capa
-  const featuredQuotes = data.quotations.slice(0, 4);
+  const tickerItems = quotations.slice(0, 5);
 
   return (
     <Document
-      title={`RE/MAX AGRO Newsletter · Edição ${data.editionNumber}`}
+      title={`RE/MAX AGRO · Newsletter Semanal · Edição ${editionNumber}`}
       author="RE/MAX AGRO powered by DATAGRO"
-      subject="Newsletter Semanal de Agronegócio"
-      keywords="agronegócio, cotações, fazendas, DATAGRO, RE/MAX AGRO"
-      creator="RE/MAX AGRO Newsletter System"
+      subject="Newsletter Semanal Exclusiva do Agronegócio Brasileiro"
+      creator="RE/MAX AGRO"
+      producer="RE/MAX AGRO Digital"
+      language="pt-BR"
     >
+      <Page
+        size="A4"
+        style={S.page}
+        wrap={true}
+      >
+        <View style={S.outer}>
+          <View style={S.inner}>
 
-      {/* ═══════════════════════════ PÁGINA 1 — CAPA ═══════════════════════ */}
-      <Page size="A4" style={s.page}>
-
-        {/* Header verde completo */}
-        <View style={s.coverHeader}>
-          <View style={s.coverTopRow}>
-            <Image src="/images/logo-white.png" style={s.coverLogo} />
-            <View style={s.coverEditionBox}>
-              <Text style={s.coverEditionNum}>Newsletter Semanal · Edição Nº {data.editionNumber}</Text>
-              <Text style={s.coverDate}>{data.editionDate}</Text>
-            </View>
-          </View>
-        </View>
-        <View style={s.goldLine} />
-
-        {/* Ticker */}
-        <View style={s.ticker}>
-          <Text style={s.tickerLabel}>⚡ AGRO EM TEMPO REAL</Text>
-          <Text style={s.tickerText}>{tickerStr}</Text>
-        </View>
-
-        {/* Carta editorial */}
-        <View style={s.editorialBox}>
-          <View style={s.editorialInner}>
-            <View style={s.editorialTextCol}>
-              <Text style={s.editorialTag}>✦  Carta Editorial · Edição {data.editionNumber}</Text>
-              <Text style={s.editorialTitle}>
-                O Agro Estratégico na Palma da Sua Mão
-              </Text>
-              <Text style={s.editorialBody}>
-                Bem-vindo à primeira edição da newsletter semanal mais relevante do agronegócio brasileiro. Com curadoria exclusiva da RE/MAX AGRO powered by DATAGRO — referência em inteligência agrícola há mais de 35 anos —, você recebe toda segunda-feira o que realmente importa para tomar as melhores decisões no campo.{"\n\n"}
-                Esta semana: safra recorde de soja, decisão do COPOM e janela estratégica de comercialização. Boa leitura.
-              </Text>
-              <Text style={s.editorialSign}>Gabriel Pesciallo</Text>
-              <Text style={s.editorialRole}>CEO · RE/MAX AGRO</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Cotações destaque */}
-        <View style={s.quoteRow}>
-          {featuredQuotes.map(q => (
-            <View key={q.id} style={s.quoteCard}>
-              <Text style={s.quoteName}>{q.name}</Text>
-              <Text style={s.quoteValue}>{q.value}</Text>
-              <Text style={s.quoteUnit}>{q.unit}</Text>
-              <Text style={q.change >= 0 ? s.quoteUp : s.quoteDown}>
-                {q.change >= 0 ? "▲" : "▼"} {Math.abs(q.change)}%
-              </Text>
-            </View>
-          ))}
-        </View>
-        <View style={{ backgroundColor: C.goldBg }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: M.h, paddingBottom: 8 }}>
-            <Text style={s.quoteSource}>Fonte: DATAGRO · Atualizado em {data.lastUpdated} · Cotações indicativas</Text>
-            <Link src="https://portal.datagro.com/pt" style={{ color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold", textDecoration: "underline" }}>
-              Painel completo →
-            </Link>
-          </View>
-        </View>
-
-        {/* Todas as cotações — tabela compacta */}
-        <View style={[s.pagePad, { marginTop: 12 }]}>
-          <SecHead tag="Painel Completo de Cotações · DATAGRO" title="Culturas & Commodities" />
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
-            {data.quotations.map(q => (
-              <View key={q.id} style={{ width: "23.5%", backgroundColor: C.green, borderRadius: 6, padding: 8 }}>
-                <Text style={{ color: "#FFFFFFAA", fontSize: 6.5, marginBottom: 1 }}>{q.name}</Text>
-                <Text style={{ color: C.white, fontSize: 10.5, fontFamily: "Helvetica-Bold" }}>{q.value}</Text>
-                <Text style={{ color: "#FFFFFF55", fontSize: 6 }}>{q.unit} · {q.region}</Text>
-                <Text style={{ color: q.change >= 0 ? C.emerald : "#F87171", fontSize: 7, fontFamily: "Helvetica-Bold", marginTop: 3 }}>
-                  {q.change >= 0 ? "▲" : "▼"} {Math.abs(q.change)}%
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <PageNum />
-      </Page>
-
-      {/* ═════════════════════════ PÁGINA 2 — NOTÍCIAS + SIDEBAR ══════════ */}
-      <Page size="A4" style={s.page}>
-        <View style={s.coverHeader}>
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <Image src="/images/logo-white.png" style={[s.coverLogo, { width: 110, height: 36 }]} />
-            <Text style={s.coverEditionNum}>Edição Nº {data.editionNumber} · {data.lastUpdated}</Text>
-          </View>
-        </View>
-        <View style={s.goldLine} />
-
-        <View style={[s.pagePad, { flex: 1 }]}>
-          <View style={s.twoCol}>
-
-            {/* COLUNA PRINCIPAL */}
-            <View style={s.mainCol}>
-              <SecHead tag="Últimos 7 Dias" title="Principais Movimentos do Agro" />
-
-              {data.mainNews.map(news => (
-                <View key={news.id} style={s.newsCardMain}>
-                  <View style={s.newsCardMainBody}>
-                    <Text style={s.newsMainCat}>{news.category}</Text>
-                    <Text style={s.newsMainTitle}>{news.title}</Text>
-                    {news.summary && <Text style={s.newsMainSummary}>{news.summary}</Text>}
-                    <View style={s.newsMainFooter}>
-                      <Text style={s.newsDate}>{news.date}{news.readTime ? `  ·  ${news.readTime} de leitura` : ""}</Text>
-                      {news.url && (
-                        <Link src={news.url} style={s.newsReadLink}>Leia o artigo completo →</Link>
-                      )}
-                    </View>
-                  </View>
+            {/* ─── 1. HEADER ─────────────────────────────────────────── */}
+            <View style={S.headerTopBar} />
+            <View style={S.headerBg}>
+              <View style={S.headerRow}>
+                <Image
+                  src="/images/logo-white.png"
+                  style={S.headerLogoImg}
+                />
+                <View style={S.headerRight}>
+                  <Text style={S.headerLabel}>Newsletter Semanal Exclusiva</Text>
+                  <Text style={S.headerEdition}>Edição Nº {editionNumber}</Text>
+                  <Text style={S.headerDate}>{editionDate}</Text>
                 </View>
+              </View>
+            </View>
+            <View style={S.headerNavBar}>
+              {["Cotações", "Notícias", "Novidades", "Eventos", "Propriedades"].map((item) => (
+                <Text key={item} style={S.headerNavLink}>{item}</Text>
               ))}
-
-              {/* Notícias secundárias */}
-              <View style={s.secNewsBox}>
-                <View style={s.secNewsHeader}>
-                  <Text style={s.secNewsHeaderText}>Mais Notícias da Semana</Text>
-                </View>
-                {data.secondaryNews.map(news => (
-                  <View key={news.id} style={s.secNewsRow}>
-                    <View style={s.secNewsBullet} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={s.secNewsCat}>{news.category}</Text>
-                      {news.url
-                        ? <Link src={news.url} style={[s.secNewsTitle, { textDecoration: "none" }]}>{news.title}</Link>
-                        : <Text style={s.secNewsTitle}>{news.title}</Text>
-                      }
-                      <Text style={s.secNewsDate}>{news.date}</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
+              <Link src="https://agro.remax.com.br/newsletter" style={S.headerNavLinkGold}>Ver Online →</Link>
             </View>
 
-            {/* SIDEBAR */}
-            <View style={s.sideCol}>
-
-              {/* Propriedade em Destaque */}
-              <View style={s.sidebarBox}>
-                <View style={s.sidebarHeader}>
-                  <Text style={s.sidebarHeaderText}>🏡 Propriedade em Destaque</Text>
-                </View>
-                <View style={s.sidebarBody}>
-                  <View style={s.propCard}>
-                    <View style={s.propBadge}><Text style={s.propBadgeText}>NOVO</Text></View>
-                    <Text style={s.propLabel}>Fazenda Exclusiva</Text>
-                    <Text style={s.propTitle}>Fazenda Santa Luzia — 4.200 ha</Text>
-                    <Text style={s.propSub}>Soja + Milho · Mato Grosso</Text>
-                    <Text style={s.propDetail}>Produtividade acima da média regional. Infraestrutura completa. Oportunidade única de investimento.</Text>
-                  </View>
-                  <Link src="https://agro.remax.com.br">
-                    <View style={{ backgroundColor: C.gold, borderRadius: 20, paddingVertical: 6, alignItems: "center", marginTop: 4 }}>
-                      <Text style={{ color: C.green, fontSize: 7.5, fontFamily: "Helvetica-Bold" }}>Ver Detalhes →</Text>
-                    </View>
-                  </Link>
-                </View>
-              </View>
-
-              {/* Dica da Semana */}
-              <View style={s.sidebarBox}>
-                <View style={s.sidebarHeader}>
-                  <Text style={s.sidebarHeaderText}>💡 Dica da Semana</Text>
-                </View>
-                <View style={s.sidebarBody}>
-                  <View style={s.tipBox}>
-                    <Text style={s.tipLabel}>Mercado de Terras</Text>
-                    <Text style={s.tipText}>
-                      Propriedades com certificação ESG estão valorizando até <Text style={{ color: C.gold, fontFamily: "Helvetica-Bold" }}>25% acima</Text> da média de mercado. Saiba como adequar sua fazenda.
-                    </Text>
-                  </View>
-                  <Link src="https://agro.remax.com.br/blog">
-                    <View style={{ backgroundColor: "#FFFFFF15", borderRadius: 20, paddingVertical: 5, alignItems: "center" }}>
-                      <Text style={{ color: C.white, fontSize: 7, fontFamily: "Helvetica-Bold" }}>Ler Análise Completa →</Text>
-                    </View>
-                  </Link>
-                </View>
-              </View>
-
-              {/* CTA Especialista */}
-              <View style={s.sidebarBox}>
-                <View style={s.sidebarBody}>
-                  <View style={s.sidebarCTA}>
-                    <Text style={s.sidebarCTATitle}>Fale com um{"\n"}Especialista Agora</Text>
-                    <Text style={s.sidebarCTASub}>Atendimento em todo o Brasil</Text>
-                    <Link src="https://wa.me/5511915051212">
-                      <View style={s.sidebarCTABtn}>
-                        <Text style={s.sidebarCTABtnText}>WhatsApp →</Text>
-                      </View>
-                    </Link>
-                  </View>
-                  <Text style={{ color: C.gold, fontSize: 7, textAlign: "center" }}>+55 (11) 91505-1212</Text>
-                </View>
-              </View>
-
-              {/* Redes sociais */}
-              <View style={s.sidebarBox}>
-                <View style={[s.sidebarHeader, { justifyContent: "center" }]}>
-                  <Text style={s.sidebarHeaderText}>Siga a RE/MAX AGRO</Text>
-                </View>
-                <View style={[s.sidebarBody, { paddingTop: 8 }]}>
-                  {[
-                    { label: "Instagram", url: "https://www.instagram.com/remaxcommercialdivsaoagro" },
-                    { label: "LinkedIn",  url: "https://www.linkedin.com/company/remax-agro" },
-                    { label: "Facebook",  url: "https://www.facebook.com/remaxagro" },
-                  ].map(soc => (
-                    <Link key={soc.label} src={soc.url}>
-                      <View style={{ backgroundColor: "#FFFFFF12", borderRadius: 5, padding: 6, marginBottom: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                        <Text style={{ color: C.white, fontSize: 7.5 }}>{soc.label} →</Text>
-                      </View>
-                    </Link>
-                  ))}
-                  <Link src="https://agro.remax.com.br/newsletter">
-                    <View style={{ backgroundColor: C.gold, borderRadius: 5, padding: 6, alignItems: "center" }}>
-                      <Text style={{ color: C.green, fontSize: 7.5, fontFamily: "Helvetica-Bold" }}>Ver Newsletter Online →</Text>
-                    </View>
-                  </Link>
-                </View>
-              </View>
-
-            </View>
-          </View>
-        </View>
-
-        <PageNum />
-      </Page>
-
-      {/* ═════════════════════ PÁGINA 3 — INSIGHTS + CORRETORES ═══════════ */}
-      <Page size="A4" style={s.page}>
-        <View style={s.coverHeader}>
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <Image src="/images/logo-white.png" style={[s.coverLogo, { width: 110, height: 36 }]} />
-            <Text style={s.coverEditionNum}>Edição Nº {data.editionNumber} · {data.lastUpdated}</Text>
-          </View>
-        </View>
-        <View style={s.goldLine} />
-
-        <View style={[s.pagePad, { flex: 1 }]}>
-          <View style={s.twoCol}>
-
-            {/* Coluna insights */}
-            <View style={s.mainCol}>
-              <SecHead tag="Radar da Próxima Semana" title="Insights & O Que Vem Por Aí" />
-              {data.insights.map(insight => {
-                const badge =
-                  insight.urgency === "alta" ? s.badgeAlta
-                  : insight.urgency === "evento" ? s.badgeEvento
-                  : s.badgeMedia;
-                const badgeLabel =
-                  insight.urgency === "alta" ? "⚠ Alta Prioridade"
-                  : insight.urgency === "evento" ? "📅 Evento"
-                  : "👁 Atenção";
-                return (
-                  <View key={insight.id} style={s.insightCard}>
-                    <View style={s.badgeRow}>
-                      <Text style={badge}>{badgeLabel}</Text>
-                      <Text style={s.insightDate}>{insight.date}</Text>
-                    </View>
-                    <Text style={s.insightTitle}>{insight.title}</Text>
-                    <Text style={s.insightDesc}>{insight.description}</Text>
-                  </View>
-                );
-              })}
-            </View>
-
-            {/* Coluna corretores */}
-            <View style={s.sideCol}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <Image src="/images/selo-corretor-certificado.png" style={{ width: 48, height: 48, objectFit: "contain" }} />
-                <View>
-                  <Text style={[s.secTag, { marginBottom: 2 }]}>Certificados</Text>
-                  <Text style={{ color: C.green, fontSize: 9, fontFamily: "Helvetica-Bold", lineHeight: 1.3 }}>Corretores{"\n"}Especializados</Text>
-                </View>
-              </View>
-              {data.brokers.map(broker => (
-                <View key={broker.id} style={[s.brokerCard, { marginBottom: 7 }]}>
-                  <Text style={s.brokerName}>{broker.name}</Text>
-                  <Text style={s.brokerRole}>{broker.role}</Text>
-                  <Text style={s.brokerRegion}>{broker.region}</Text>
-                  <Link src={`https://wa.me/${broker.whatsapp.replace(/\D/g, "")}`}>
-                    <View style={s.brokerWaBtn}>
-                      <Text style={s.brokerWaText}>WhatsApp →</Text>
-                    </View>
-                  </Link>
-                </View>
-              ))}
-
-              {/* Mini CTA análise DATAGRO */}
-              <View style={{ backgroundColor: C.goldBg, borderRadius: 8, padding: 10, marginTop: 2, borderTop: `3pt solid ${C.gold}` }}>
-                <Text style={{ color: C.gold, fontSize: 6.5, fontFamily: "Helvetica-Bold", letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>Análise Exclusiva</Text>
-                <Text style={{ color: C.green, fontSize: 8.5, fontFamily: "Helvetica-Bold", lineHeight: 1.4, marginBottom: 5 }}>
-                  Relatório DATAGRO: Perspectivas Q2 2026
+            {/* ─── 2. HERO ───────────────────────────────────────────── */}
+            <View style={S.heroBg}>
+              <Image src="/images/hero-agro-newsletter.jpg" style={S.heroImage} />
+              <View style={S.heroOverlay}>
+                <Text style={S.heroEyebrow}>✦ Safra 2025/26 · Inteligência Agro</Text>
+                <Text style={S.heroTitle}>O Agro que Transforma Propriedades em Patrimônio</Text>
+                <Text style={S.heroSubtitle}>
+                  Cotações em tempo real, oportunidades exclusivas e análises DATAGRO toda segunda-feira.
                 </Text>
-                <Link src="https://portal.datagro.com/pt">
-                  <View style={{ backgroundColor: C.green, borderRadius: 20, paddingVertical: 5, alignItems: "center" }}>
-                    <Text style={{ color: C.gold, fontSize: 7, fontFamily: "Helvetica-Bold" }}>Acessar Relatório →</Text>
+                <Link src="https://agro.remax.com.br">
+                  <View style={S.heroCta}>
+                    <Text style={S.heroCtaText}>Saiba Mais →</Text>
                   </View>
                 </Link>
               </View>
             </View>
-          </View>
 
-          {/* CTA Banner */}
-          <View style={s.ctaBanner}>
-            <View style={s.ctaLeft}>
-              <Text style={s.ctaTag}>Central de Atendimento RE/MAX AGRO</Text>
-              <Text style={s.ctaTitle}>Transforme informação em oportunidade no campo</Text>
-              <Text style={s.ctaSub}>+55 (11) 91505-1212  ·  contatoagro@remax.com.br  ·  agro.remax.com.br</Text>
-            </View>
-            <Link src="https://agro.remax.com.br">
-              <View style={s.ctaBtn}>
-                <Text style={s.ctaBtnText}>Fale com Especialista →</Text>
+            {/* ─── 3. TICKER ─────────────────────────────────────────── */}
+            <View style={S.tickerBg}>
+              <View style={S.tickerBadge}>
+                <Text style={S.tickerBadgeText}>⚡ AGRO AO VIVO</Text>
               </View>
-            </Link>
-          </View>
-        </View>
-
-        <PageNum />
-      </Page>
-
-      {/* ════════════════════════ PÁGINA 4 — RODAPÉ LEGAL ═════════════════ */}
-      <Page size="A4" style={s.page}>
-        <View style={s.footerPage}>
-
-          {/* Header mini */}
-          <View style={[s.coverHeader, { paddingVertical: 12 }]}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <Image src="/images/logo-white.png" style={[s.coverLogo, { width: 110, height: 36 }]} />
-              <Text style={s.coverEditionNum}>Edição Nº {data.editionNumber} · {data.lastUpdated}</Text>
+              <View style={{ flexDirection: "row", flex: 1, flexWrap: "wrap" }}>
+                {tickerItems.map((q, i) => (
+                  <View key={q.id} style={{ flexDirection: "row", alignItems: "center" }}>
+                    {i > 0 && <Text style={S.tickerDot}>·</Text>}
+                    <Text style={S.tickerName}>{q.name}</Text>
+                    <Text style={q.change >= 0 ? S.tickerUp : S.tickerDown}>
+                      {" "}R$ {q.value} {q.change >= 0 ? "▲" : "▼"}{Math.abs(q.change)}%
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-          <View style={s.goldLine} />
 
-          <View style={s.footerTop}>
+            {/* ─── 4. EDITORIAL ─────────────────────────────────────── */}
+            <View style={S.editorialBg}>
+              <View style={S.editorialLeft}>
+                <Text style={S.editorialEyebrow}>✦ Carta Editorial · Edição {editionNumber}</Text>
+                <Text style={S.editorialTitle}>O Agro Estratégico na Palma da Sua Mão</Text>
+                <Text style={S.editorialBody}>
+                  Bem-vindo à newsletter semanal mais relevante do agronegócio brasileiro. Com curadoria exclusiva da RE/MAX AGRO powered by DATAGRO — referência em inteligência agrícola há mais de 35 anos —, você recebe toda segunda-feira o que realmente importa para o mercado de terras e commodities.
+                </Text>
+                <Text style={S.editorialBody}>
+                  Esta semana: safra recorde de soja atinge 162 Mi de toneladas, decisão do COPOM impactando o crédito rural e janela estratégica de comercialização para produtores do Centro-Oeste. Boa leitura.
+                </Text>
+                <Text style={S.editorialCeo}>
+                  Gabriel Pesciallo{" "}
+                  <Text style={{ fontFamily: "Helvetica", fontSize: 10, color: "rgba(255,255,255,0.4)" }}>
+                    — CEO · RE/MAX AGRO
+                  </Text>
+                </Text>
+              </View>
+              <View style={S.editorialStatsBox}>
+                <Text style={S.statLabel}>SAFRA 2025/26</Text>
+                <Text style={S.statValue}>162Mi</Text>
+                <Text style={S.statSub}>ton. de soja</Text>
+                <View style={S.statHr} />
+                <Text style={S.statLabel}>VALORIZAÇÃO TERRAS</Text>
+                <Text style={S.statValue}>+18%</Text>
+                <Text style={S.statSub}>Centro-Oeste · 12m</Text>
+                <View style={S.statHr} />
+                <Text style={S.statLabel}>ESG PREMIUM</Text>
+                <Text style={S.statValue}>+25%</Text>
+                <Text style={S.statSub}>valorização média</Text>
+              </View>
+            </View>
+            <GoldBar />
 
-            {/* Logo + redes */}
-            <View style={s.footerLogoRow}>
-              <Image src="/images/logo-white.png" style={s.footerLogo} />
-              <View style={s.footerSocials}>
-                {[
-                  { label: "Instagram", url: "https://www.instagram.com/remaxcommercialdivsaoagro" },
-                  { label: "LinkedIn",  url: "https://www.linkedin.com/company/remax-agro" },
-                  { label: "Facebook",  url: "https://www.facebook.com/remaxagro" },
-                ].map(soc => (
-                  <Link key={soc.label} src={soc.url}>
-                    <View style={s.footerSocialChip}>
-                      <Text style={s.footerSocialText}>{soc.label}</Text>
+            {/* ─── 5. COTAÇÕES ───────────────────────────────────────── */}
+            <View style={S.quotesBg}>
+              <SectionPill>📊 Painel de Cotações · DATAGRO</SectionPill>
+              <Text style={S.sectionTitle}>Culturas & Commodities</Text>
+              <View style={S.quotesGrid}>
+                {quotations.slice(0, 4).map((q) => (
+                  <View key={q.id} style={S.quoteCard}>
+                    <Text style={S.quoteName}>{q.name}</Text>
+                    <Text style={S.quoteValue}>R$ {q.value}</Text>
+                    <Text style={S.quoteUnit}>{q.unit}</Text>
+                    <Text style={q.change >= 0 ? S.quoteUp : S.quoteDown}>
+                      {q.change >= 0 ? "▲" : "▼"} {Math.abs(q.change)}%
+                    </Text>
+                    <Text style={S.quoteRegion}>{q.region}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={S.quotesMeta}>
+                <Text style={S.quoteMetaText}>Fonte: DATAGRO · {lastUpdated}</Text>
+                <Link src="https://portal.datagro.com/pt" style={{ fontSize: 9, fontFamily: "Helvetica-Bold", color: C.gold, textDecoration: "underline" }}>
+                  Painel completo →
+                </Link>
+              </View>
+            </View>
+
+            {/* ─── 6. TOP NOTÍCIAS + SIDEBAR ─────────────────────────── */}
+            <View style={S.newsBg}>
+              <SectionPill>📰 Top Notícias Agro da Semana</SectionPill>
+              <Text style={S.sectionTitle}>Principais Movimentos do Agro</Text>
+              <View style={S.newsRow}>
+                {/* Coluna principal */}
+                <View style={S.newsMain}>
+                  {mainNews.map((n) => (
+                    <View key={n.id} style={S.newsCard}>
+                      <Text style={S.newsCategory}>{n.category}</Text>
+                      <Text style={S.newsTitle}>{n.title}</Text>
+                      {n.summary ? (
+                        <Text style={S.newsSummary}>{n.summary}</Text>
+                      ) : null}
+                      <View style={S.newsMeta}>
+                        <Text style={S.newsDate}>{n.date}{n.readTime ? ` · ${n.readTime}` : ""}</Text>
+                        {n.url ? (
+                          <Link src={n.url} style={S.newsLink}>Leia o artigo →</Link>
+                        ) : null}
+                      </View>
                     </View>
-                  </Link>
-                ))}
-              </View>
-            </View>
+                  ))}
+                </View>
 
-            {/* Grid de contatos */}
-            <View style={s.footerGrid}>
-              <View style={s.footerCol}>
-                <Text style={s.footerColTitle}>Contato</Text>
-                {[
-                  { label: "+55 (11) 91505-1212", url: "tel:+5511915051212" },
-                  { label: "contatoagro@remax.com.br", url: "mailto:contatoagro@remax.com.br" },
-                ].map(item => (
-                  <View key={item.label} style={s.footerItem}>
-                    <View style={s.footerDot} />
-                    <Link src={item.url} style={s.footerLink}>{item.label}</Link>
+                {/* Sidebar blog */}
+                <View style={S.newsSidebar}>
+                  <View style={S.sidebarBg}>
+                    <View style={S.sidebarHeader}>
+                      <Text style={S.sidebarHeaderText}>📰 Destaques do Blog</Text>
+                    </View>
+                    {secondaryNews.map((n) => (
+                      <View key={n.id} style={S.sidebarItem}>
+                        <View style={S.sidebarDot} />
+                        <View style={S.sidebarItemContent}>
+                          <Text style={S.sidebarCat}>{n.category}</Text>
+                          {n.url ? (
+                            <Link src={n.url} style={S.sidebarTitle}>{n.title}</Link>
+                          ) : (
+                            <Text style={S.sidebarTitle}>{n.title}</Text>
+                          )}
+                          <Text style={S.sidebarDate}>{n.date}</Text>
+                        </View>
+                      </View>
+                    ))}
+                    <View style={S.sidebarCta}>
+                      <Link src="https://agro.remax.com.br/blog" style={S.sidebarCtaText}>
+                        Ver todos os posts →
+                      </Link>
+                    </View>
                   </View>
-                ))}
-              </View>
-              <View style={s.footerCol}>
-                <Text style={s.footerColTitle}>Sites</Text>
-                {[
-                  { label: "agro.remax.com.br", url: "https://agro.remax.com.br" },
-                  { label: "portal.datagro.com", url: "https://portal.datagro.com/pt" },
-                ].map(item => (
-                  <View key={item.label} style={s.footerItem}>
-                    <View style={s.footerDot} />
-                    <Link src={item.url} style={s.footerLink}>{item.label}</Link>
+
+                  {/* CTA WhatsApp */}
+                  <View style={S.whatsappBox}>
+                    <Text style={S.whatsappTitle}>Fale com um Especialista</Text>
+                    <Text style={S.whatsappSub}>Atendimento em todo o Brasil</Text>
+                    <Link src="https://wa.me/5511915051212">
+                      <View style={S.whatsappBtn}>
+                        <Text style={S.whatsappBtnText}>WhatsApp →</Text>
+                      </View>
+                    </Link>
+                    <Text style={S.whatsappPhone}>+55 (11) 91505-1212</Text>
                   </View>
-                ))}
-              </View>
-              <View style={s.footerCol}>
-                <Text style={s.footerColTitle}>Edições Anteriores</Text>
-                <View style={s.footerItem}>
-                  <View style={s.footerDot} />
-                  <Link src="https://agro.remax.com.br/newsletter" style={s.footerLink}>Ver todas as edições</Link>
                 </View>
               </View>
             </View>
 
-          </View>
-
-          <View style={s.footerDivider} />
-
-          {/* LGPD Legal */}
-          <View style={s.legalBox}>
-            <Text style={s.legalTitle}>🔒 Privacidade & LGPD</Text>
-            <Text style={s.legalText}>
-              Esta newsletter foi enviada porque você se inscreveu voluntariamente na lista da RE/MAX AGRO powered by DATAGRO.
-              Seus dados pessoais são tratados com total confidencialidade, conforme a <Text style={{ fontFamily: "Helvetica-Bold", color: C.gold }}>LGPD — Lei Geral de Proteção de Dados (Lei nº 13.709/2018)</Text>.
-              {"\n"}Não compartilhamos suas informações com terceiros sem seu consentimento explícito.
-              Você pode revogar seu consentimento e solicitar a exclusão dos seus dados a qualquer momento clicando em "Descadastrar" abaixo ou enviando e-mail para contatoagro@remax.com.br.
-            </Text>
-          </View>
-
-          {/* Links opt-out */}
-          <View style={s.optOutRow}>
-            {[
-              { label: "🌐 Ver Newsletter Online", url: "https://agro.remax.com.br/newsletter" },
-              { label: "🚫 Descadastrar (Opt-out)", url: "mailto:contatoagro@remax.com.br?subject=Descadastro%20Newsletter%20RE/MAX%20AGRO" },
-              { label: "📄 Política de Privacidade", url: "https://agro.remax.com.br/privacidade" },
-              { label: "📋 Termos de Uso", url: "https://agro.remax.com.br/termos" },
-              { label: "✉ Fale Conosco", url: "mailto:contatoagro@remax.com.br" },
-            ].map((l, i, arr) => (
-              <View key={l.label} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                <Link src={l.url} style={s.optOutLink}>{l.label}</Link>
-                {i < arr.length - 1 && <Text style={s.optOutSep}>·</Text>}
+            {/* ─── 7. NOVIDADES DO AGRO ──────────────────────────────── */}
+            <View style={S.novidadesBg}>
+              <SectionPill>✨ Novidades do Agro</SectionPill>
+              <Text style={S.sectionTitle}>Tendências & Destaques da Semana</Text>
+              <View style={S.novidadesGrid}>
+                {[
+                  { emoji: "🌱", color: "#059669", cat: "Sustentabilidade", title: "Certificação ESG Valoriza Fazendas em até 25%", body: "Adequação ESG vira diferencial no mercado de terras.", date: "09 Abr 2026" },
+                  { emoji: "🤖", color: "#0284C7", cat: "Tecnologia", title: "IA e Drones Lideram Transformação do Agro", body: "Agricultura de precisão cresce 34% no Brasil.", date: "11 Abr 2026" },
+                  { emoji: "📦", color: "#D97706", cat: "Exportações", title: "China Amplia Compras: Carne Bovina +22%", body: "Demanda asiática aquecida impulsiona o agro.", date: "10 Abr 2026" },
+                ].map((item, idx) => (
+                  <View key={idx} style={[S.novidadeCard, { borderTopColor: item.color }]}>
+                    <View style={S.novidadeCardBody}>
+                      <Text style={S.novidadeEmoji}>{item.emoji}</Text>
+                      <Text style={[S.novidadeCat, { color: item.color }]}>{item.cat}</Text>
+                      <Text style={S.novidadeTitle}>{item.title}</Text>
+                      <Text style={S.novidadeBody}>{item.body}</Text>
+                      <Text style={S.novidadeDate}>{item.date}</Text>
+                    </View>
+                  </View>
+                ))}
               </View>
-            ))}
+            </View>
+
+            {/* ─── 8. EVENTOS & AGENDA ───────────────────────────────── */}
+            <View style={S.eventosBg}>
+              <SectionPill>📅 Eventos & Agenda Agro</SectionPill>
+              <Text style={S.sectionTitle}>O Que Vem Por Aí</Text>
+              {insights.map((ins) => {
+                const badgeBg = ins.urgency === "alta" ? "#FEE2E2" : ins.urgency === "evento" ? "#D1FAE5" : "#FEF3C7";
+                const badgeColor = ins.urgency === "alta" ? "#B91C1C" : ins.urgency === "evento" ? "#065F46" : "#92400E";
+                const label = ins.urgency === "alta" ? "⚠ Alta Prioridade" : ins.urgency === "evento" ? "📅 Evento" : "👁 Atenção";
+                return (
+                  <View key={ins.id} style={S.insightCard}>
+                    <View style={S.insightBadgeRow}>
+                      <View style={[S.insightBadge, { backgroundColor: badgeBg }]}>
+                        <Text style={[S.insightBadgeText, { color: badgeColor }]}>{label}</Text>
+                      </View>
+                      <Text style={S.insightDate}>{ins.date}</Text>
+                    </View>
+                    <Text style={S.insightTitle}>{ins.title}</Text>
+                    <Text style={S.insightDesc}>{ins.description}</Text>
+                  </View>
+                );
+              })}
+              <View style={S.agrishowBox}>
+                <View style={S.agrishowLeft}>
+                  <Text style={S.agrishowEye}>AGRISHOW 2026</Text>
+                  <Text style={S.agrishowTitle}>RE/MAX AGRO Estará Presente!</Text>
+                  <Text style={S.agrishowSub}>Ribeirão Preto · Maio 2026 · Estande exclusivo</Text>
+                </View>
+                <Link src="https://agro.remax.com.br">
+                  <View style={S.agrishowCta}>
+                    <Text style={S.agrishowCtaText}>Agendar Reunião →</Text>
+                  </View>
+                </Link>
+              </View>
+            </View>
+            <GoldBar />
+
+            {/* ─── 9. PROPRIEDADES RURAIS ────────────────────────────── */}
+            <View style={S.propsBg}>
+              <SectionPill>🏡 Oportunidades em Propriedades Rurais</SectionPill>
+              <Text style={S.sectionTitle}>Grandes Propriedades em Destaque</Text>
+              <View style={S.propsRow}>
+                {/* Card principal */}
+                <View style={S.propCardMain}>
+                  <View style={S.propCardMainImage}>
+                    <Text style={S.propCardMainImageText}>✦ DESTAQUE DA SEMANA</Text>
+                  </View>
+                  <View style={S.propCardMainBody}>
+                    <View style={[S.propBadge, { backgroundColor: C.success }]}>
+                      <Text style={S.propBadgeText}>DESTAQUE</Text>
+                    </View>
+                    <Text style={S.propTitle}>Fazenda Santa Luzia — 4.200 ha</Text>
+                    <Text style={S.propSub}>Soja + Milho · Mato Grosso</Text>
+                    <Text style={S.propDesc}>
+                      Produtividade acima da média regional. Infraestrutura completa para soja e milho. Alto potencial de valorização com lavouras estabelecidas.
+                    </Text>
+                    <Link src="https://agro.remax.com.br">
+                      <View style={S.propCta}>
+                        <Text style={S.propCtaText}>Ver Detalhes →</Text>
+                      </View>
+                    </Link>
+                  </View>
+                </View>
+
+                {/* Cards menores empilhados */}
+                <View style={S.propSideStack}>
+                  <View style={S.propCardSmall}>
+                    <View style={[S.propSmallBadge, { backgroundColor: C.navy }]}>
+                      <Text style={[S.propBadgeText, { color: C.gold }]}>NOVO</Text>
+                    </View>
+                    <Text style={S.propSmallTitle}>Fazenda Boa Esperança — 2.800 ha</Text>
+                    <Text style={S.propSmallSub}>Pecuária + Soja · Goiás</Text>
+                    <Text style={S.propSmallDesc}>Pivô central, escritura regularizada. Ideal para investidores.</Text>
+                    <Link src="https://agro.remax.com.br" style={S.propSmallLink}>Ver Detalhes →</Link>
+                  </View>
+                  <View style={S.propCardSmall}>
+                    <View style={[S.propSmallBadge, { backgroundColor: C.info }]}>
+                      <Text style={S.propBadgeText}>EXCLUSIVO</Text>
+                    </View>
+                    <Text style={S.propSmallTitle}>Sítio Recanto Verde — 980 ha</Text>
+                    <Text style={S.propSmallSub}>Café Especial · Minas Gerais</Text>
+                    <Text style={S.propSmallDesc}>Café premiado, altitude ideal, certificação de origem.</Text>
+                    <Link src="https://agro.remax.com.br" style={S.propSmallLink}>Ver Detalhes →</Link>
+                  </View>
+                </View>
+              </View>
+              <View style={S.propsVerTodas}>
+                <Link src="https://agro.remax.com.br" style={S.propsVerTodasLink}>
+                  Ver todas as propriedades →
+                </Link>
+              </View>
+            </View>
+            <GoldBar />
+
+            {/* ─── 10. CORRETORES CERTIFICADOS ───────────────────────── */}
+            <View style={S.brokersBg}>
+              <View style={S.brokersHeaderRow}>
+                <Link src="https://agro.remax.com.br/corretores-especializados/">
+                  <Image src="/images/selo-corretor-certificado.png" style={S.brokersSeloImg} />
+                </Link>
+                <View style={S.brokersHeaderText}>
+                  <SectionPill>Corretores Certificados</SectionPill>
+                  <Text style={S.sectionTitleWhite}>Especialistas RE/MAX AGRO</Text>
+                  <Link src="https://agro.remax.com.br/corretores-especializados/" style={S.brokersLink}>
+                    Ver todos os corretores especializados →
+                  </Link>
+                </View>
+              </View>
+              <View style={S.brokersGrid}>
+                {brokers.map((b) => (
+                  <View key={b.id} style={S.brokerCard}>
+                    <Text style={S.brokerName}>{b.name}</Text>
+                    <Text style={S.brokerRole}>{b.role}</Text>
+                    <Text style={S.brokerRegion}>{b.region}</Text>
+                    <Link src={`https://wa.me/${b.whatsapp.replace(/\D/g, "")}`}>
+                      <View style={S.brokerWaBtn}>
+                        <Text style={S.brokerWaBtnText}>WhatsApp →</Text>
+                      </View>
+                    </Link>
+                  </View>
+                ))}
+              </View>
+              <View style={S.brokersCta}>
+                <View style={S.brokersCtaLeft}>
+                  <Text style={S.brokersCtaTitle}>Conheça todos os nossos especialistas</Text>
+                  <Text style={S.brokersCtaSub}>Atendimento em todo o território nacional</Text>
+                </View>
+                <Link src="https://agro.remax.com.br/corretores-especializados/">
+                  <View style={S.brokersCtaBtn}>
+                    <Text style={S.brokersCtaBtnText}>Ver Corretores →</Text>
+                  </View>
+                </Link>
+              </View>
+            </View>
+
+            {/* ─── 11. CTA FINAL ─────────────────────────────────────── */}
+            <View style={S.ctaBg}>
+              <Text style={S.ctaTitle}>Transforme Informação em{"\n"}Oportunidade no Campo</Text>
+              <Text style={S.ctaSub}>Fale com um especialista ou acesse o site para ver oportunidades exclusivas</Text>
+              <View style={S.ctaBtns}>
+                <Link src="https://wa.me/5511915051212">
+                  <View style={S.ctaBtnPrimary}>
+                    <Text style={S.ctaBtnPrimaryText}>WhatsApp →</Text>
+                  </View>
+                </Link>
+                <Link src="https://agro.remax.com.br">
+                  <View style={S.ctaBtnOutline}>
+                    <Text style={S.ctaBtnOutlineText}>Visitar Site →</Text>
+                  </View>
+                </Link>
+              </View>
+            </View>
+
+            {/* ─── 12. FOOTER LGPD ───────────────────────────────────── */}
+            <View style={S.footerBg}>
+              <View style={S.footerTopRow}>
+                <Image src="/images/logo-white.png" style={S.footerLogoImg} />
+                <View style={S.footerSocials}>
+                  {[
+                    { label: "Instagram", url: "https://www.instagram.com/remaxcommercialdivsaoagro" },
+                    { label: "LinkedIn",  url: "https://www.linkedin.com/company/remax-agro" },
+                    { label: "Facebook",  url: "https://www.facebook.com/remaxagro" },
+                  ].map((s) => (
+                    <Link key={s.label} src={s.url}>
+                      <View style={S.footerSocialBtn}>
+                        <Text style={S.footerSocialText}>{s.label}</Text>
+                      </View>
+                    </Link>
+                  ))}
+                </View>
+              </View>
+
+              <View style={S.footerCols}>
+                <View style={S.footerCol}>
+                  <Text style={S.footerColTitle}>Contato</Text>
+                  <Link src="tel:+5511915051212" style={S.footerColLink}>+55 (11) 91505-1212</Link>
+                  <Link src="mailto:contatoagro@remax.com.br" style={S.footerColLink}>contatoagro@remax.com.br</Link>
+                  <Link src="https://agro.remax.com.br" style={S.footerColLink}>agro.remax.com.br</Link>
+                </View>
+                <View style={S.footerCol}>
+                  <Text style={S.footerColTitle}>Sites</Text>
+                  <Link src="https://portal.datagro.com/pt" style={S.footerColLink}>portal.datagro.com</Link>
+                  <Link src="https://agro.remax.com.br/newsletter" style={S.footerColLink}>Edições anteriores</Link>
+                </View>
+                <View style={S.footerCol}>
+                  <Text style={S.footerColTitle}>Especialistas</Text>
+                  <Link src="https://agro.remax.com.br/corretores-especializados/" style={S.footerColLink}>
+                    Corretores Certificados
+                  </Link>
+                </View>
+              </View>
+
+              <View style={S.footerHr} />
+
+              <Text style={S.footerLgpdTitle}>🔒 Privacidade & LGPD</Text>
+              <Text style={S.footerLgpdText}>
+                Esta newsletter foi enviada porque você se inscreveu voluntariamente na lista da RE/MAX AGRO powered by DATAGRO. Seus dados são tratados conforme a LGPD — Lei nº 13.709/2018. Não compartilhamos suas informações sem consentimento explícito.
+              </Text>
+
+              <View style={S.footerLinksRow}>
+                <Link src="https://agro.remax.com.br/newsletter" style={S.footerOptLink}>🌐 Ver Online</Link>
+                <Text style={S.footerDot}>·</Text>
+                <Link src="mailto:contatoagro@remax.com.br?subject=Descadastro%20Newsletter" style={S.footerOptLink}>🚫 Descadastrar</Link>
+                <Text style={S.footerDot}>·</Text>
+                <Link src="https://agro.remax.com.br/privacidade" style={S.footerOptLink}>📄 Privacidade</Link>
+                <Text style={S.footerDot}>·</Text>
+                <Link src="https://agro.remax.com.br/termos" style={S.footerOptLink}>📋 Termos</Link>
+                <Text style={S.footerDot}>·</Text>
+                <Link src="mailto:contatoagro@remax.com.br" style={S.footerOptLink}>✉ Fale Conosco</Link>
+              </View>
+
+              <View style={S.footerHr} />
+              <Text style={S.footerCopy}>
+                © 2026 RE/MAX AGRO · RE/MAX Commercial Divisão Agro · powered by DATAGRO · Todos os direitos reservados.{"\n"}
+                Esta comunicação é de caráter informativo e não constitui recomendação de investimento. CRECI válido em todo o território nacional.
+              </Text>
+            </View>
+
           </View>
-
-          <View style={s.footerDivider} />
-          <Text style={s.footerCopy}>
-            © 2026 RE/MAX AGRO · RE/MAX Commercial Divisão Agro · powered by DATAGRO · Todos os direitos reservados.
-            {"\n"}Esta comunicação é de caráter informativo e não constitui recomendação de investimento. CRECI válido em todo o território nacional.
-          </Text>
-
         </View>
-
-        <PageNum />
       </Page>
-
     </Document>
   );
 }
