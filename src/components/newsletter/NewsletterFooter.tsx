@@ -1,3 +1,5 @@
+import DownloadPDFButton from "./DownloadPDFButton";
+
 export default function NewsletterFooter() {
   return (
     <footer className="w-full bg-[#1a2e4a] mt-16">
@@ -86,6 +88,17 @@ export default function NewsletterFooter() {
               </li>
             </ul>
           </div>
+        </div>
+      </div>
+
+      {/* Download PDF Banner */}
+      <div className="border-t border-white/10 bg-[#0a1f12]">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-bold text-sm">📄 Baixe esta edição em PDF</p>
+            <p className="text-white/50 text-xs mt-0.5">Com cotações, notícias linkáveis, contatos e opt-out — para ler offline ou compartilhar.</p>
+          </div>
+          <DownloadPDFButton variant="footer" />
         </div>
       </div>
 
