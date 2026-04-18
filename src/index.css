@@ -1,0 +1,208 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Roboto+Slab:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+==========================================================================
+【AI HANDOVER NOTE】
+1. DESIGN PHILOSOPHY:
+   - Atmosphere-First with Agricultural Heritage: This design system embodies the gravitas of Brazilian agribusiness—earth, growth, and prosperity. The palette draws from fertile soil (#0F2A1A deep forest green), golden harvest (#C9A84C), and RE/MAX's signature red (#CC0000).
+   - Neo-minimalism meets Data Density: Clean layouts with high information density. Bento-style modular surfaces for commodity panels, news grids, and insights radar. Each module is self-contained yet harmonious.
+   - Physicality with Subtle Depth: Soft shadows, rim-light effects on cards, and gentle gradients create tactile surfaces without overwhelming the content. The cream beige background (#F5F0E8) provides warmth and reduces eye strain for weekly reading.
+
+2. TYPOGRAPHY:
+   - Inter (Sans): Chosen for its exceptional legibility at small sizes (critical for data tables and ticker bars). Its geometric precision conveys professionalism and modernity, aligning with DATAGRO's analytical authority.
+   - Roboto Slab (Display): Used sparingly for hero headlines and section titles. Its sturdy serifs evoke tradition and trustworthiness—essential for financial/agricultural content.
+   - JetBrains Mono: For commodity symbols (SOJ, MIL, BOI) and numerical data. Monospaced alignment ensures visual consistency in price tables.
+
+3. COLOR SYSTEM:
+   - Brand Primary (#0F2A1A → --primary): Deep forest green (Hue 150°) represents Brazilian agriculture's lush landscapes. Maps to primary buttons, headers, and key UI elements.
+   - Brand Accent (#C9A84C → --accent): Golden harvest (Hue 45°) symbolizes prosperity and commodity value. Used for highlights, CTAs, and DATAGRO branding.
+   - Brand Alert (#CC0000 → --destructive): RE/MAX red (Hue 0°) for urgent actions and negative market movements.
+   - Semantic Colors: Success (green, Hue 145°) for positive price changes, Warning (amber, Hue 40°) for alerts, Destructive (red, Hue 0°) for losses.
+   - Neutral Base: Cream beige background (#F5F0E8) in light mode provides warmth; dark mode uses charcoal (#0F1410) to maintain agricultural earthiness.
+
+4. USAGE GUIDE:
+   - Layout: Full-width hero with centered max-w-7xl container. Sidebar sticky on desktop (lg:w-72). Mobile-first responsive grid.
+   - Special Effects: Use backdrop-blur-sm on glassmorphic overlays (hero gradient). Subtle box-shadow for card elevation. Avoid heavy animations—data should feel stable and trustworthy.
+   - Typography Scale: Hero headlines 3xl-5xl, section titles xl uppercase tracking-wide, body text sm-base, data labels xs-sm monospace.
+   - Accessibility: Ensure WCAG AA contrast for all text. Use semantic HTML (header, nav, main, aside, footer). Provide alt text for commodity/news images.
+   - Project-Specific Rules: Ticker bar must animate smoothly (30s linear infinite). Commodity cards use bold price display with color-coded change indicators. Newsletter tone is authoritative yet approachable—design should reflect this balance.
+==========================================================================
+*/
+
+:root {
+  /* Typography */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: JetBrains Mono, 'Courier New', monospace;
+  
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Core UI Tokens */
+  --background: oklch(0.97 0.01 60);
+  --foreground: oklch(0.15 0.02 150);
+  --card: oklch(0.99 0.005 60);
+  --card-foreground: oklch(0.18 0.02 150);
+  --popover: oklch(0.99 0.005 60);
+  --popover-foreground: oklch(0.15 0.02 150);
+  --primary: oklch(0.22 0.06 150);
+  --primary-foreground: oklch(0.97 0.01 60);
+  --secondary: oklch(0.94 0.015 60);
+  --secondary-foreground: oklch(0.22 0.06 150);
+  --muted: oklch(0.95 0.01 60);
+  --muted-foreground: oklch(0.48 0.02 150);
+  --accent: oklch(0.68 0.12 45);
+  --accent-foreground: oklch(0.15 0.02 150);
+  --destructive: oklch(0.55 0.22 15);
+  --destructive-foreground: oklch(0.99 0.005 60);
+  --border: oklch(0.88 0.015 60);
+  --input: oklch(0.90 0.015 60);
+  --ring: oklch(0.68 0.12 45);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.68 0.12 45);
+  --chart-2: oklch(0.55 0.22 15);
+  --chart-3: oklch(0.22 0.06 150);
+  --chart-4: oklch(0.60 0.18 145);
+  --chart-5: oklch(0.50 0.10 200);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.22 0.06 150);
+  --sidebar-foreground: oklch(0.97 0.01 60);
+  --sidebar-primary: oklch(0.68 0.12 45);
+  --sidebar-primary-foreground: oklch(0.15 0.02 150);
+  --sidebar-accent: oklch(0.30 0.08 150);
+  --sidebar-accent-foreground: oklch(0.97 0.01 60);
+  --sidebar-border: oklch(0.30 0.04 150);
+  --sidebar-ring: oklch(0.68 0.12 45);
+}
+
+.dark {
+  --background: oklch(0.12 0.02 150);
+  --foreground: oklch(0.92 0.01 60);
+  --card: oklch(0.16 0.025 150);
+  --card-foreground: oklch(0.92 0.01 60);
+  --popover: oklch(0.14 0.025 150);
+  --popover-foreground: oklch(0.92 0.01 60);
+  --primary: oklch(0.68 0.12 45);
+  --primary-foreground: oklch(0.15 0.02 150);
+  --secondary: oklch(0.20 0.03 150);
+  --secondary-foreground: oklch(0.92 0.01 60);
+  --muted: oklch(0.18 0.025 150);
+  --muted-foreground: oklch(0.60 0.02 150);
+  --accent: oklch(0.72 0.14 45);
+  --accent-foreground: oklch(0.12 0.02 150);
+  --destructive: oklch(0.60 0.24 15);
+  --destructive-foreground: oklch(0.98 0.005 60);
+  --border: oklch(0.25 0.03 150);
+  --input: oklch(0.22 0.03 150);
+  --ring: oklch(0.72 0.14 45);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.72 0.14 45);
+  --chart-2: oklch(0.60 0.24 15);
+  --chart-3: oklch(0.68 0.12 150);
+  --chart-4: oklch(0.65 0.20 145);
+  --chart-5: oklch(0.58 0.14 200);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.10 0.02 150);
+  --sidebar-foreground: oklch(0.92 0.01 60);
+  --sidebar-primary: oklch(0.72 0.14 45);
+  --sidebar-primary-foreground: oklch(0.12 0.02 150);
+  --sidebar-accent: oklch(0.25 0.06 150);
+  --sidebar-accent-foreground: oklch(0.92 0.01 60);
+  --sidebar-border: oklch(0.20 0.03 150);
+  --sidebar-ring: oklch(0.72 0.14 45);
+}
+
+@theme inline {
+  /* Shadcn Core Mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts Mapping */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar Mapping */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans min-h-screen;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  code, pre {
+    @apply font-mono;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
+  }
+}

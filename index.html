@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RE/MAX AGRO powered by DATAGRO — Newsletter Semanal</title>
+    <meta name="description" content="Newsletter semanal de agronegócio com curadoria exclusiva RE/MAX AGRO powered by DATAGRO" />
+    <meta name="author" content="RE/MAX AGRO" />
+    <meta property="og:title" content="RE/MAX AGRO powered by DATAGRO — Newsletter Semanal" />
+    <meta property="og:description" content="Newsletter semanal de agronegócio com curadoria exclusiva RE/MAX AGRO powered by DATAGRO" />
+    <meta property="og:type" content="website" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      @keyframes ticker {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      @keyframes scrollArrow {
+        0%   { transform: translateY(-6px); opacity: 0.4; }
+        50%  { transform: translateY(4px);  opacity: 1; }
+        100% { transform: translateY(-6px); opacity: 0.4; }
+      }
+      @keyframes slideUp {
+        from { transform: translateY(100%); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes popIn {
+        from { transform: scale(0.88) translateY(24px); opacity: 0; }
+        to   { transform: scale(1)    translateY(0);    opacity: 1; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
