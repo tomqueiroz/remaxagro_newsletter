@@ -1,4 +1,4 @@
-import DownloadPDFButton from "./DownloadPDFButton";
+import DownloadButtons from "./DownloadButtons";
 
 export default function NewsletterFooter() {
   return (
@@ -98,7 +98,7 @@ export default function NewsletterFooter() {
             <p className="text-white font-bold text-sm">📄 Baixe esta edição em PDF</p>
             <p className="text-white/50 text-xs mt-0.5">Com cotações, notícias linkáveis, contatos e opt-out — para ler offline ou compartilhar.</p>
           </div>
-          <DownloadPDFButton variant="footer" />
+          <DownloadButtons variant="footer" />
         </div>
       </div>
 
