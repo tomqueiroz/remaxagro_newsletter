@@ -1,48 +1,45 @@
-import React from 'react';
-import Header from '../components/newsletter/Header';
-import TickerBar from '../components/newsletter/TickerBar';
-import Hero from '../components/newsletter/Hero';
-import CommodityPanel from '../components/newsletter/CommodityPanel';
-import NewsGrid from '../components/newsletter/NewsGrid';
-import InsightsRadar from '../components/newsletter/InsightsRadar';
-import BrokersSection from '../components/newsletter/BrokersSection';
-import SubscribeForm from '../components/newsletter/SubscribeForm';
-import Sidebar from '../components/newsletter/Sidebar';
-import Footer from '../components/newsletter/Footer';
+import NewsletterHeader from "@/components/newsletter/NewsletterHeader";
+import HeroIntro from "@/components/newsletter/HeroIntro";
+import QuotationsPanel from "@/components/newsletter/QuotationsPanel";
+import NewsHighlights from "@/components/newsletter/NewsHighlights";
+import InsightsForecast from "@/components/newsletter/InsightsForecast";
+import NewsletterSidebar from "@/components/newsletter/NewsletterSidebar";
+import BrokersTeam from "@/components/newsletter/BrokersTeam";
+import SubscribeSection from "@/components/newsletter/SubscribeSection";
+import NewsletterFooter from "@/components/newsletter/NewsletterFooter";
 
-const Home: React.FC = () => {
-  const editionNumber = 1;
-  const date = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
+export default function Home() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
-      <Header editionNumber={editionNumber} date={date} />
-      <TickerBar />
-      <Hero edition={`Edition ${editionNumber}`} date={date} />
-      
-      <main className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-[#F5F0E8]" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <NewsletterHeader />
+      <HeroIntro />
+
+      <main className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+        {/* Painel de Cotações full width */}
+        <div className="mb-10">
+          <QuotationsPanel />
+        </div>
+
+        {/* Layout 2 colunas: conteúdo principal + sidebar */}
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1">
-            <CommodityPanel />
-            <NewsGrid />
-            <InsightsRadar />
-            <BrokersSection />
-            <SubscribeForm />
+          {/* Coluna principal */}
+          <div className="flex-1 min-w-0 space-y-10">
+            <NewsHighlights />
+            <InsightsForecast />
+            <BrokersTeam />
+            <SubscribeSection />
           </div>
-          
-          <aside className="w-full lg:w-72 shrink-0">
-            <Sidebar />
-          </aside>
+
+          {/* Sidebar */}
+          <div className="w-full lg:w-[340px] flex-shrink-0">
+            <div className="lg:sticky lg:top-6">
+              <NewsletterSidebar />
+            </div>
+          </div>
         </div>
       </main>
-      
-      <Footer />
+
+      <NewsletterFooter />
     </div>
   );
-};
-
-export default Home;
+}
