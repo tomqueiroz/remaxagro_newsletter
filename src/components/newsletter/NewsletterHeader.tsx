@@ -1,5 +1,5 @@
 import { useState } from "react";
-import DownloadPDFButton from "./DownloadPDFButton";
+import DownloadButtons from "./DownloadButtons";
 
 const navItems = [
   { label: "Destaques", href: "#destaques" },
@@ -67,7 +67,7 @@ export default function NewsletterHeader() {
               </a>
             ))}
             <div className="ml-auto flex items-center gap-2">
-              <DownloadPDFButton variant="header" />
+              <DownloadButtons variant="header" />
               <a
                 href="#inscricao"
                 className="whitespace-nowrap px-5 py-2 bg-[#CC0000] text-white text-xs font-bold rounded-full hover:bg-[#e60000] transition-all duration-200 cursor-pointer"
@@ -90,7 +90,7 @@ export default function NewsletterHeader() {
                 </a>
               ))}
               <div className="mt-2 mx-4">
-                <DownloadPDFButton variant="header" />
+                <DownloadButtons variant="header" />
               </div>
               <a
                 href="#inscricao"
