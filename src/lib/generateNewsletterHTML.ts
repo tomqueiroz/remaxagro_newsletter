@@ -193,13 +193,8 @@ export function generateNewsletterHTML(data: NewsletterData): string {
       <tr><td style="background-color:#0F2A1A;border-bottom:3px solid #C9A84C;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
           <tr>
-            <!-- Selo -->
-            <td width="90" valign="top" style="padding:18px 0 18px 28px;">
-              <img src="https://agro.remax.com.br/images/selo-corretor-certificado.png" alt="Corretor Certificado RE/MAX Commercial" width="70" height="70" style="display:block;border-radius:50%;" />
-              <p style="margin:5px 0 0;font-size:8px;color:#C9A84C;text-align:center;font-family:Arial,sans-serif;">Corretor<br/>Certificado</p>
-            </td>
             <!-- Texto editorial -->
-            <td valign="top" style="padding:18px 28px 18px 14px;">
+            <td valign="top" style="padding:18px 28px;">
               <p style="margin:0 0 6px;font-size:10px;font-weight:700;color:#C9A84C;letter-spacing:1.5px;text-transform:uppercase;font-family:Arial,sans-serif;">✦ Carta Editorial · Edição ${editionNumber}</p>
               <h1 style="margin:0 0 10px;font-size:22px;color:#ffffff;line-height:1.3;font-family:Georgia,'Times New Roman',serif;">O Agro Estratégico na Palma da Sua Mão</h1>
               <p style="margin:0 0 8px;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65;font-family:Arial,sans-serif;">
@@ -208,7 +203,7 @@ export function generateNewsletterHTML(data: NewsletterData): string {
               <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65;font-family:Arial,sans-serif;">
                 Esta semana: safra recorde de soja, decisão do COPOM e janela estratégica de comercialização. Boa leitura.
               </p>
-              <p style="margin:0;font-size:12px;font-weight:700;color:#C9A84C;font-family:Arial,sans-serif;">Alexandre Trevizan <span style="color:rgba(255,255,255,0.4);font-weight:400;">— CEO · RE/MAX AGRO</span></p>
+              <p style="margin:0;font-size:12px;font-weight:700;color:#C9A84C;font-family:Arial,sans-serif;">Gabriel Pesciallo <span style="color:rgba(255,255,255,0.4);font-weight:400;">— CEO · RE/MAX AGRO</span></p>
             </td>
           </tr>
         </table>
