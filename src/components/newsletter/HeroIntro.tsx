@@ -15,7 +15,7 @@ export default function HeroIntro() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-[#C9A84C] text-[#0F2A1A] text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-wider">
                 <i className="ri-star-fill text-xs"></i>
-                Primeira Edição · Maio 2026
+                Primeira Edição · 29 de Maio de 2026
               </div>
 
               <h1

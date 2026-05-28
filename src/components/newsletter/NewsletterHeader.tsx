@@ -34,7 +34,7 @@ export default function NewsletterHeader() {
             />
             <div className="border-l border-[#CC0000]/30 pl-3">
               <p className="text-[#CC0000] text-xs font-semibold tracking-widest uppercase">Newsletter Semanal</p>
-              <p className="text-[#1a2e4a]/60 text-xs mt-0.5">Edição Nº 001 · Maio 2026</p>
+              <p className="text-[#1a2e4a]/60 text-xs mt-0.5">Edição Nº 001 · 29 de Maio de 2026</p>
             </div>
           </div>
 

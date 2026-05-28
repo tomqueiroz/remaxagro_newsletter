@@ -50,7 +50,7 @@ export default function NewsHighlights() {
               Última Semana
             </span>
             <span className="text-[#9a9a9a] text-xs font-medium">
-              25 – 29 Mai 2026
+              29 Mai 2026
             </span>
           </div>
           <h2
