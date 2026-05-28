@@ -1,8 +1,9 @@
-import { allNews } from "@/mocks/newsletter";
+import { allNews, NewsItem } from "@/mocks/newsletter";
+import { useState } from "react";
+import NewsModal from "./NewsModal";
 
 const mainNews = allNews.slice(0, 6);
 const secondaryNews = allNews.slice(6);
-
 // Ícone de fonte mapeado para cada domínio
 function SourceBadge({ source }: { source: string }) {
   const isDatagro = source === "DATAGRO";
@@ -21,6 +22,8 @@ function SourceBadge({ source }: { source: string }) {
 }
 
 export default function NewsHighlights() {
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
   return (
     <section id="destaques" className="w-full">
 
@@ -32,7 +35,7 @@ export default function NewsHighlights() {
               Última Semana
             </span>
             <span className="text-[#9a9a9a] text-xs font-medium">
-              27 – 30 Abr 2026
+              25 – 29 Mai 2026
             </span>
           </div>
           <h2
@@ -54,12 +57,10 @@ export default function NewsHighlights() {
       {/* ── Cards em destaque (top 6, com imagem) ─────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {mainNews.map((news, idx) => (
-          <a
+          <button
             key={news.id}
-            href={news.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/60 hover:shadow-lg transition-all duration-300 flex flex-col"
+            onClick={() => setSelectedNews(news)}
+            className="group bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/60 hover:shadow-lg transition-all duration-300 flex flex-col text-left"
           >
             {/* Imagem */}
             <div className="relative h-48 overflow-hidden flex-shrink-0">
@@ -111,12 +112,12 @@ export default function NewsHighlights() {
                   Fonte: {news.source}
                 </span>
                 <span className="inline-flex items-center gap-1.5 bg-[#0F2A1A] text-white text-xs font-bold px-4 py-1.5 rounded-full group-hover:bg-[#C9A84C] group-hover:text-[#0F2A1A] transition-all duration-200">
-                  Saiba mais
+                  Ler na íntegra
                   <i className="ri-arrow-right-line text-[11px] group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </div>
             </div>
-          </a>
+          </button>
         ))}
       </div>
 
