@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export default function SubscribeSection() {
   const [submitted, setSubmitted] = useState(false);
@@ -15,23 +14,8 @@ export default function SubscribeSection() {
     }
     setLgpdError(false);
     setLoading(true);
-    
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("nome") as string;
-    const email = formData.get("email") as string;
-    const profile = formData.get("perfil") as string;
-
     try {
-      await supabase.from("leads").insert([
-        {
-          name,
-          email,
-          source: `footer_subscribe_${profile}`,
-        },
-      ]);
-      setSubmitted(true);
-    } catch (error) {
-      console.error("Error saving lead:", error);
+      await new Promise((r) => setTimeout(r, 800));
       setSubmitted(true);
     } finally {
       setLoading(false);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import DownloadButtons from "./DownloadButtons";
+import DownloadButtons from "./DownloadButtons";
 
 const navItems = [
   { label: "Destaques", href: "#destaques" },
@@ -34,7 +34,7 @@ export default function NewsletterHeader() {
             />
             <div className="border-l border-[#CC0000]/30 pl-3">
               <p className="text-[#CC0000] text-xs font-semibold tracking-widest uppercase">Newsletter Semanal</p>
-              <p className="text-[#1a2e4a]/60 text-xs mt-0.5">Edição Nº 001 · 29 de Maio de 2026</p>
+              <p className="text-[#1a2e4a]/60 text-xs mt-0.5">Edição Nº 001 · Maio 2026</p>
             </div>
           </div>
 
@@ -67,7 +67,7 @@ export default function NewsletterHeader() {
               </a>
             ))}
             <div className="ml-auto flex items-center gap-2">
-              {/* <DownloadButtons variant="header" /> */}
+              <DownloadButtons variant="header" />
               <a
                 href="#inscricao"
                 className="whitespace-nowrap px-5 py-2 bg-[#CC0000] text-white text-xs font-bold rounded-full hover:bg-[#e60000] transition-all duration-200 cursor-pointer"
@@ -89,9 +89,9 @@ export default function NewsletterHeader() {
                   {item.label}
                 </a>
               ))}
-              {/* <div className="mt-2 mx-4">
+              <div className="mt-2 mx-4">
                 <DownloadButtons variant="header" />
-              </div> */}
+              </div>
               <a
                 href="#inscricao"
                 className="mt-1 mx-4 py-2.5 bg-[#CC0000] text-white text-sm font-bold rounded-full text-center cursor-pointer"

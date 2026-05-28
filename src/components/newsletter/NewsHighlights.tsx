@@ -1,10 +1,8 @@
-import { allNews, NewsItem } from "@/mocks/newsletter";
-import { useState } from "react";
-import NewsModal from "./NewsModal";
-import { supabase } from "@/integrations/supabase/client";
+import { allNews } from "@/mocks/newsletter";
 
 const mainNews = allNews.slice(0, 6);
 const secondaryNews = allNews.slice(6);
+
 // Ícone de fonte mapeado para cada domínio
 function SourceBadge({ source }: { source: string }) {
   const isDatagro = source === "DATAGRO";
@@ -23,22 +21,6 @@ function SourceBadge({ source }: { source: string }) {
 }
 
 export default function NewsHighlights() {
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-
-  const handleNewsClick = async (news: NewsItem) => {
-    setSelectedNews(news);
-    try {
-      await supabase.from("news_clicks").insert([
-        {
-          news_id: news.id,
-          news_title: news.title,
-        },
-      ]);
-    } catch (error) {
-      console.error("Error tracking news click:", error);
-    }
-  };
-
   return (
     <section id="destaques" className="w-full">
 
@@ -50,7 +32,7 @@ export default function NewsHighlights() {
               Última Semana
             </span>
             <span className="text-[#9a9a9a] text-xs font-medium">
-              29 Mai 2026
+              27 – 30 Abr 2026
             </span>
           </div>
           <h2
@@ -72,10 +54,12 @@ export default function NewsHighlights() {
       {/* ── Cards em destaque (top 6, com imagem) ─────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {mainNews.map((news, idx) => (
-          <button
+          <a
             key={news.id}
-            onClick={() => handleNewsClick(news)}
-            className="group bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/60 hover:shadow-lg transition-all duration-300 flex flex-col text-left"
+            href={news.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/60 hover:shadow-lg transition-all duration-300 flex flex-col"
           >
             {/* Imagem */}
             <div className="relative h-48 overflow-hidden flex-shrink-0">
@@ -127,12 +111,12 @@ export default function NewsHighlights() {
                   Fonte: {news.source}
                 </span>
                 <span className="inline-flex items-center gap-1.5 bg-[#0F2A1A] text-white text-xs font-bold px-4 py-1.5 rounded-full group-hover:bg-[#C9A84C] group-hover:text-[#0F2A1A] transition-all duration-200">
-                  Ler na íntegra
+                  Saiba mais
                   <i className="ri-arrow-right-line text-[11px] group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </div>
             </div>
-          </button>
+          </a>
         ))}
       </div>
 
@@ -159,7 +143,6 @@ export default function NewsHighlights() {
               href={news.url}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => handleNewsClick(news)}
               className="flex items-center gap-4 px-5 py-4 hover:bg-[#FAFAF5] transition-colors group"
             >
               {/* Ícone temático */}

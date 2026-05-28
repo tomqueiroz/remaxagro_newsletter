@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
@@ -12,8 +11,7 @@ export default function ExitIntentPopup() {
 
   useEffect(() => {
     const dismissed = sessionStorage.getItem("exit_popup_dismissed_remax");
-    const hasRegistered = localStorage.getItem("remax_agro_registered");
-    if (dismissed || hasRegistered) return;
+    if (dismissed) return;
 
     // Desktop: detecta saída do mouse pelo topo da página
     const handleMouseLeave = (e: MouseEvent) => {
@@ -51,32 +49,9 @@ export default function ExitIntentPopup() {
     }
     setLgpdError(false);
     setLoading(true);
-    
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("nome") as string;
-    const email = formData.get("email") as string;
-    const whatsapp = formData.get("whatsapp") as string;
-
     try {
-      await supabase.from("leads").insert([
-        {
-          name,
-          email,
-          whatsapp,
-          source: "exit_intent_popup",
-        },
-      ]);
-      
+      await new Promise((r) => setTimeout(r, 900));
       setSubmitted(true);
-      localStorage.setItem("remax_agro_registered", "1");
-      setTimeout(() => {
-        sessionStorage.setItem("exit_popup_dismissed_remax", "1");
-        setVisible(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Error saving lead:", error);
-      setSubmitted(true);
-      localStorage.setItem("remax_agro_registered", "1");
       setTimeout(() => {
         sessionStorage.setItem("exit_popup_dismissed_remax", "1");
         setVisible(false);
