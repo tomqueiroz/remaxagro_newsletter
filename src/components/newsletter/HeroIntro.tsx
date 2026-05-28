@@ -15,7 +15,7 @@ export default function HeroIntro() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-[#C9A84C] text-[#0F2A1A] text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-wider">
                 <i className="ri-star-fill text-xs"></i>
-                Primeira Edição · Abril 2026
+                Primeira Edição · Maio 2026
               </div>
 
               <h1
@@ -119,7 +119,7 @@ export default function HeroIntro() {
               </p>
               <p>
                 É com esse propósito que nasce a{" "}
-                <strong className="text-[#0F2A1A]">Newsletter RE/MAX AGRO powered by DATAGRO</strong>. A <strong>DATAGRO</strong>, referência em dados e informações do agro no Brasil, com mais de 30 anos de atuação, une forças com a <strong>RE/MAX AGRO</strong>, maior rede de corretores especializados em propriedades rurais do país, para entregar, toda segunda-feira, o que realmente importa para quem decide no campo.
+                <strong className="text-[#0F2A1A]">Newsletter RE/MAX AGRO powered by DATAGRO</strong>. A <strong>DATAGRO</strong>, referência em dados e informações do agro no Brasil, com mais de 30 anos de atuação, une forças com a <strong>RE/MAX AGRO</strong>, maior rede de corretores especializados em propriedades rurais do país, para entregar, toda semana, o que realmente importa para quem decide no campo.
               </p>
               <p>
                 Aqui você encontrará o resumo dos principais movimentos do agro na semana anterior, cotações das principais culturas, análises do mercado de terras, insights sobre o que está por vir e a agenda dos eventos que você não pode perder.
