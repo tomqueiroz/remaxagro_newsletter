@@ -1,6 +1,7 @@
 import { allNews, NewsItem } from "@/mocks/newsletter";
 import { useState } from "react";
 import NewsModal from "./NewsModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const mainNews = allNews.slice(0, 6);
 const secondaryNews = allNews.slice(6);
@@ -23,6 +24,20 @@ function SourceBadge({ source }: { source: string }) {
 
 export default function NewsHighlights() {
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  const handleNewsClick = async (news: NewsItem) => {
+    setSelectedNews(news);
+    try {
+      await supabase.from("news_clicks").insert([
+        {
+          news_id: news.id,
+          news_title: news.title,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error tracking news click:", error);
+    }
+  };
 
   return (
     <section id="destaques" className="w-full">
@@ -59,7 +74,7 @@ export default function NewsHighlights() {
         {mainNews.map((news, idx) => (
           <button
             key={news.id}
-            onClick={() => setSelectedNews(news)}
+            onClick={() => handleNewsClick(news)}
             className="group bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/60 hover:shadow-lg transition-all duration-300 flex flex-col text-left"
           >
             {/* Imagem */}
@@ -144,6 +159,7 @@ export default function NewsHighlights() {
               href={news.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => handleNewsClick(news)}
               className="flex items-center gap-4 px-5 py-4 hover:bg-[#FAFAF5] transition-colors group"
             >
               {/* Ícone temático */}

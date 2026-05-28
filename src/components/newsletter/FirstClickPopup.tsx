@@ -1,45 +1,44 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export default function ExitIntentPopup() {
+export default function FirstClickPopup() {
   const [visible, setVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lgpdChecked, setLgpdChecked] = useState(false);
   const [lgpdError, setLgpdError] = useState(false);
   const triggered = useRef(false);
-  const mobileTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("exit_popup_dismissed_remax");
     const hasRegistered = localStorage.getItem("remax_agro_registered");
-    if (dismissed || hasRegistered) return;
+    const hasSeenFirstClick = sessionStorage.getItem("first_click_popup_seen");
+    
+    if (hasRegistered || hasSeenFirstClick) return;
 
-    // Desktop: detecta saída do mouse pelo topo da página
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 5 && !triggered.current) {
+    const handleFirstClick = (e: MouseEvent) => {
+      // Ignore clicks on the popup itself or its backdrop
+      const target = e.target as HTMLElement;
+      if (target.closest('.first-click-popup-container')) return;
+
+      if (!triggered.current) {
         triggered.current = true;
         setVisible(true);
+        sessionStorage.setItem("first_click_popup_seen", "1");
       }
     };
 
-    // Mobile: dispara após 40s de leitura
-    mobileTimer.current = setTimeout(() => {
-      if (!triggered.current && window.innerWidth < 768) {
-        triggered.current = true;
-        setVisible(true);
-      }
-    }, 40000);
+    // Add listener with a slight delay so it doesn't trigger immediately on load if user clicks fast
+    const timer = setTimeout(() => {
+      document.addEventListener("click", handleFirstClick, { capture: true });
+    }, 1000);
 
-    document.addEventListener("mouseleave", handleMouseLeave);
     return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (mobileTimer.current) clearTimeout(mobileTimer.current);
+      clearTimeout(timer);
+      document.removeEventListener("click", handleFirstClick, { capture: true });
     };
   }, []);
 
   const close = () => {
-    sessionStorage.setItem("exit_popup_dismissed_remax", "1");
     setVisible(false);
   };
 
@@ -63,22 +62,21 @@ export default function ExitIntentPopup() {
           name,
           email,
           whatsapp,
-          source: "exit_intent_popup",
+          source: "first_click_popup",
         },
       ]);
       
       setSubmitted(true);
       localStorage.setItem("remax_agro_registered", "1");
       setTimeout(() => {
-        sessionStorage.setItem("exit_popup_dismissed_remax", "1");
         setVisible(false);
       }, 3000);
     } catch (error) {
       console.error("Error saving lead:", error);
+      // Even if it fails, we let them through for UX
       setSubmitted(true);
       localStorage.setItem("remax_agro_registered", "1");
       setTimeout(() => {
-        sessionStorage.setItem("exit_popup_dismissed_remax", "1");
         setVisible(false);
       }, 3000);
     } finally {
@@ -90,7 +88,7 @@ export default function ExitIntentPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 first-click-popup-container"
       style={{ animation: "fadeIn 0.3s ease both" }}
     >
       {/* Backdrop */}
@@ -125,13 +123,13 @@ export default function ExitIntentPopup() {
             />
             <div className="inline-flex items-center gap-2 bg-[#C9A84C] text-[#0F2A1A] text-xs font-bold px-4 py-1.5 rounded-full mb-3 uppercase tracking-wider">
               <i className="ri-mail-star-line text-xs"></i>
-              Lista Exclusiva · 100% Gratuito
+              Acesso Exclusivo
             </div>
             <h2
               className="text-white text-xl md:text-2xl font-bold leading-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Não vá embora sem entrar para a lista exclusiva do
+              Cadastre-se para acessar o conteúdo completo do
               <span className="text-[#C9A84C] italic"> Agro Estratégico</span>
             </h2>
           </div>
@@ -144,31 +142,16 @@ export default function ExitIntentPopup() {
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-emerald-100 mx-auto mb-4">
                 <i className="ri-check-double-line text-emerald-600 text-2xl"></i>
               </div>
-              <h3 className="text-[#0F2A1A] font-bold text-lg mb-2">Bem-vindo à lista exclusiva! 🌱</h3>
+              <h3 className="text-[#0F2A1A] font-bold text-lg mb-2">Cadastro realizado com sucesso! 🌱</h3>
               <p className="text-[#5a5a5a] text-sm">
-                Você receberá toda segunda-feira a newsletter mais estratégica do agronegócio brasileiro, além de informativos e convites para eventos exclusivos.
+                Aproveite a leitura. Você também receberá nossa newsletter semanal.
               </p>
             </div>
           ) : (
             <>
               <p className="text-[#5a5a5a] text-sm leading-relaxed mb-4">
-                Receba toda segunda-feira o que realmente importa no campo: cotações, destaques de mercado, análises DATAGRO e convites exclusivos para eventos do setor.
+                Para continuar navegando e lendo as notícias na íntegra, faça seu cadastro rápido e gratuito.
               </p>
-
-              {/* Benefícios */}
-              <div className="grid grid-cols-2 gap-2 mb-5">
-                {[
-                  { icon: "ri-newspaper-line", text: "Newsletter Semanal" },
-                  { icon: "ri-bar-chart-line", text: "Análises DATAGRO" },
-                  { icon: "ri-calendar-event-line", text: "Eventos Exclusivos" },
-                  { icon: "ri-notification-line", text: "Informativos Especiais" },
-                ].map((b) => (
-                  <div key={b.text} className="flex items-center gap-2 bg-[#F5F0E8] rounded-xl px-3 py-2">
-                    <i className={`${b.icon} text-[#C9A84C] text-sm`}></i>
-                    <span className="text-[#0F2A1A] text-xs font-medium">{b.text}</span>
-                  </div>
-                ))}
-              </div>
 
               <form onSubmit={handleSubmit} className="space-y-3">
                 <input
@@ -210,7 +193,7 @@ export default function ExitIntentPopup() {
                       e a{" "}
                       <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A] cursor-pointer">Política de Privacidade</a>.
                       Consinto com o tratamento dos meus dados pessoais pela RE/MAX AGRO e DATAGRO para envio de comunicações, conforme a{" "}
-                      <strong>LGPD (Lei nº 13.709/2018)</strong>. Posso revogar meu consentimento a qualquer momento.
+                      <strong>LGPD (Lei nº 13.709/2018)</strong>.
                     </span>
                   </label>
                   {lgpdError && (
@@ -224,27 +207,15 @@ export default function ExitIntentPopup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#0F2A1A] hover:bg-[#1A4A2A] text-white font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-full py-3.5 bg-[#0F2A1A] hover:bg-[#1A4A2A] text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                 >
                   {loading ? (
-                    <>
-                      <i className="ri-loader-4-line animate-spin"></i>
-                      Inscrevendo...
-                    </>
+                    <i className="ri-loader-4-line animate-spin text-lg"></i>
                   ) : (
                     <>
-                      <i className="ri-mail-send-line"></i>
-                      Quero Fazer Parte da Lista Exclusiva
+                      Acessar Conteúdo <i className="ri-arrow-right-line"></i>
                     </>
                   )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={close}
-                  className="w-full text-[#9a9a9a] text-xs hover:text-[#5a5a5a] transition-colors cursor-pointer py-1"
-                >
-                  Não, prefiro perder os informativos exclusivos
                 </button>
               </form>
             </>
