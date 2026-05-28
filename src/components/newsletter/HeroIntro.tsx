@@ -45,7 +45,7 @@ export default function HeroIntro() {
                   className="whitespace-nowrap inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-full hover:bg-white/20 transition-all duration-200 cursor-pointer text-sm border border-white/20"
                 >
                   <i className="ri-bar-chart-line"></i>
-                  Cotações ao Vivo
+                  Ver Cotações
                 </a>
               </div>
             </div>
@@ -79,10 +79,10 @@ export default function HeroIntro() {
         <div className="absolute bottom-0 left-0 right-0 bg-[#0F2A1A]/80 backdrop-blur-sm border-t border-[#C9A84C]/20">
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: "ri-user-line", value: "12.400+", label: "Assinantes" },
-              { icon: "ri-mail-send-line", value: "Toda Segunda", label: "Frequência" },
-              { icon: "ri-shield-check-line", value: "100% Curado", label: "Conteúdo" },
+              { icon: "ri-mail-send-line", value: "Toda Segunda", label: "Frequência de Envio" },
+              { icon: "ri-shield-check-line", value: "Curadoria Especializada", label: "Conteúdo" },
               { icon: "ri-award-line", value: "DATAGRO", label: "Parceiro Oficial" },
+              { icon: "ri-building-line", value: "RE/MAX AGRO", label: "Maior Rede do Setor" },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-2">
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#C9A84C]/20">
@@ -111,29 +111,28 @@ export default function HeroIntro() {
               className="text-2xl md:text-3xl font-bold text-[#0F2A1A] mb-6 leading-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Bem-vindo à Newsletter que o Agro Estratégico Merecia
+              A Newsletter para Quem Lidera o Agro
             </h2>
             <div className="text-[#3a3a3a] text-base leading-relaxed space-y-4 text-left">
               <p>
-                O agronegócio brasileiro movimenta mais de{" "}
-                <strong>R$ 2,4 trilhões por ano</strong> e representa quase 30% do PIB nacional. Mesmo assim, os tomadores de decisão do setor — proprietários de grandes fazendas, investidores rurais e profissionais especializados — ainda carecem de uma fonte de informação verdadeiramente curada, estratégica e conveniente.
+                O agronegócio brasileiro movimenta trilhões de reais por ano e representa cerca de 30% do PIB nacional. Nesse contexto, é fundamental que os tomadores de decisão do setor — proprietários de grandes fazendas, investidores rurais e profissionais especializados — tenham acesso a uma fonte de informação verdadeiramente curada, estratégica e conveniente.
               </p>
               <p>
-                É para preencher esse espaço que nasce a{" "}
-                <strong className="text-[#0F2A1A]">Newsletter RE/MAX AGRO powered by DATAGRO</strong>. A <strong>DATAGRO</strong>, empresa-referência em agrodata no Brasil com mais de 30 anos de mercado, une forças com a <strong>RE/MAX AGRO</strong>, maior rede de corretores especializados em propriedades rurais do país, para entregar toda segunda-feira o que realmente importa para quem decide no campo.
+                É com esse propósito que nasce a{" "}
+                <strong className="text-[#0F2A1A]">Newsletter RE/MAX AGRO powered by DATAGRO</strong>. A <strong>DATAGRO</strong>, referência em dados e informações do agro no Brasil, com mais de 30 anos de atuação, une forças com a <strong>RE/MAX AGRO</strong>, maior rede de corretores especializados em propriedades rurais do país, para entregar, toda segunda-feira, o que realmente importa para quem decide no campo.
               </p>
               <p>
-                Aqui você encontrará o resumo dos principais movimentos do agro na semana anterior, cotações atualizadas das principais culturas, análises de mercado de terras, insights sobre o que está por vir e a agenda dos eventos que você não pode perder.
+                Aqui você encontrará o resumo dos principais movimentos do agro na semana anterior, cotações das principais culturas, análises do mercado de terras, insights sobre o que está por vir e a agenda dos eventos que você não pode perder.
               </p>
             </div>
             <div className="mt-8 flex flex-col items-center justify-center gap-4">
               <img
                 src="/images/logo-color.png"
                 alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
-                className="h-28 md:h-32 object-contain"
+className="w-[450px] max-w-full object-contain"
               />
               <p className="text-[#0F2A1A]/60 text-sm italic text-center">
-                "Informação estratégica para quem decide no campo."
+                Gabriel Pesciallo · Diretor RE/MAX Commercial Divisão Agro
               </p>
             </div>
           </div>

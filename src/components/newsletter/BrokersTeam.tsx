@@ -19,7 +19,7 @@ export default function BrokersTeam() {
                 <img
                   src="/images/selo-corretor-certificado.png"
                   alt="Corretor Certificado RE/MAX Commercial Divisão Agro"
-                  className="relative w-40 h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl"
+                  className="relative w-44 h-44 md:w-52 md:h-52 object-contain drop-shadow-2xl"
                   style={{ filter: "drop-shadow(0 0 18px rgba(201,168,76,0.35))" }}
                 />
               </div>
@@ -35,7 +35,7 @@ export default function BrokersTeam() {
               <h2 className="text-white text-2xl md:text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Corretores RE/MAX AGRO
                 <br />
-                <span className="text-[#C9A84C]">Engajados & Prontos para Atender</span>
+                <span className="text-[#C9A84C]">Certificados e Prontos para Atender</span>
               </h2>
               <p className="text-white/60 text-sm mt-3 max-w-xl">
                 Todos os nossos especialistas são <strong className="text-[#C9A84C]">Corretores Certificados RE/MAX Commercial Divisão Agro</strong> — a mais alta certificação em corretagem de propriedades rurais do Brasil. Estão ativamente engajados nesta newsletter e prontos para transformar informação em oportunidade para você.
@@ -99,11 +99,11 @@ export default function BrokersTeam() {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
               <span className="text-white/60 text-sm">
-                <strong className="text-white">100% do time</strong> está engajado e participando desta newsletter semanal
+                <strong className="text-white">Todo o time</strong> acompanha esta newsletter e está disponível para atender você
               </span>
             </div>
             <div className="sm:ml-auto flex items-center gap-3">
-              <a href="https://instagram.com/remaxagro" rel="nofollow" target="_blank" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all cursor-pointer">
+              <a href="https://www.instagram.com/remaxcommercialdivsaoagro" rel="nofollow" target="_blank" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all cursor-pointer">
                 <i className="ri-instagram-line text-sm"></i>
               </a>
               <a href="https://linkedin.com" rel="nofollow" target="_blank" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#C9A84C] text-white hover:text-[#0F2A1A] transition-all cursor-pointer">

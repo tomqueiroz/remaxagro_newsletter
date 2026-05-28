@@ -30,7 +30,7 @@ export default function NewsletterHeader() {
             <img
               src="/images/logo-color.png"
               alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
-              className="h-14 md:h-16 object-contain"
+              className="w-[200px] object-contain"
             />
             <div className="border-l border-[#CC0000]/30 pl-3">
               <p className="text-[#CC0000] text-xs font-semibold tracking-widest uppercase">Newsletter Semanal</p>
@@ -40,7 +40,7 @@ export default function NewsletterHeader() {
 
           <div className="text-right hidden md:block">
             <p className="text-[#1a2e4a] text-xs font-semibold capitalize">{formatted}</p>
-            <p className="text-[#1a2e4a]/50 text-xs mt-0.5">Curadoria exclusiva para o Agro Estratégico</p>
+            <p className="text-[#1a2e4a]/50 text-xs mt-0.5">Curadoria exclusiva para o agro estratégico</p>
           </div>
 
           <button
@@ -103,24 +103,6 @@ export default function NewsletterHeader() {
         </div>
       </nav>
 
-      {/* Breaking ticker vermelho */}
-      <div className="bg-[#CC0000] w-full overflow-hidden">
-        <div className="flex items-center">
-          <span className="bg-[#1a2e4a] text-white text-xs font-bold px-4 py-1.5 whitespace-nowrap flex-shrink-0">
-            AGRO EM TEMPO REAL
-          </span>
-          <div className="overflow-hidden flex-1">
-            <div
-              className="flex whitespace-nowrap"
-              style={{ animation: "ticker 35s linear infinite" }}
-            >
-              <span className="text-white text-xs font-semibold px-8 py-1.5">
-                🌱 Soja MT: R$ 142,80/sc · 📈 Boi Gordo SP: R$ 312,00/@ · ☕ Café MG: R$ 1.840,00/sc · 🌽 Milho PR: R$ 68,50/sc · 🌾 Trigo RS: R$ 89,20/sc · 💰 Dólar: R$ 5,72 · 📊 IBOVESPA: 132.450 pts · 🌱 Soja MT: R$ 142,80/sc · 📈 Boi Gordo SP: R$ 312,00/@ · ☕ Café MG: R$ 1.840,00/sc · 🌽 Milho PR: R$ 68,50/sc · 🌾 Trigo RS: R$ 89,20/sc
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
     </header>
   );
 }

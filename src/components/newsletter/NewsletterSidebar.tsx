@@ -1,5 +1,3 @@
-import { sidebarHighlights } from "@/mocks/newsletter";
-
 const agendaItems = [
   { date: "22 Abr", event: "Relatório USDA — Oferta e Demanda Global", type: "Mercado" },
   { date: "23 Abr", event: "Decisão COPOM — Taxa Selic", type: "Economia" },
@@ -18,38 +16,8 @@ const typeColors: Record<string, string> = {
 export default function NewsletterSidebar() {
   return (
     <aside className="w-full space-y-6">
-      {sidebarHighlights.map((item) => (
-        <div
-          key={item.id}
-          className="bg-white rounded-2xl overflow-hidden border border-[#e8e0d0] hover:border-[#C9A84C]/40 transition-all duration-200 cursor-pointer group"
-        >
-          <div className="relative h-40 overflow-hidden">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F2A1A]/70 to-transparent"></div>
-            <div className="absolute top-2 left-2">
-              <span className={`${item.badgeColor} text-white text-xs font-bold px-2.5 py-1 rounded-full`}>
-                {item.badge}
-              </span>
-            </div>
-          </div>
-          <div className="p-4">
-            <p className="text-[#C9A84C] text-xs font-bold uppercase tracking-wider mb-1">{item.label}</p>
-            <h3 className="text-[#0F2A1A] font-bold text-sm leading-snug mb-1">{item.title}</h3>
-            <p className="text-[#5a5a5a] text-xs mb-1">{item.subtitle}</p>
-            <p className="text-[#7a7a7a] text-xs leading-relaxed">{item.detail}</p>
-            <div className="mt-3 flex items-center gap-1 text-[#C9A84C] text-xs font-semibold">
-              Saiba mais
-              <i className="ri-arrow-right-line text-xs group-hover:translate-x-0.5 transition-transform"></i>
-            </div>
-          </div>
-        </div>
-      ))}
 
-      {/* Agenda */}
+      {/* Agenda Agro */}
       <div id="agenda" className="bg-white rounded-2xl border border-[#e8e0d0] overflow-hidden">
         <div className="px-4 py-3 bg-[#0F2A1A] flex items-center gap-2">
           <div className="w-5 h-5 flex items-center justify-center">
@@ -83,7 +51,7 @@ export default function NewsletterSidebar() {
             { label: "PIB do Agronegócio 2025", value: "R$ 2,4 tri", icon: "ri-money-dollar-circle-line" },
             { label: "Área Plantada de Soja", value: "45,6 mi ha", icon: "ri-plant-line" },
             { label: "Exportações Agro 2025", value: "US$ 166 bi", icon: "ri-ship-line" },
-            { label: "Empregos no Setor", value: "33 milhões", icon: "ri-user-line" },
+            { label: "Empregos no Setor", value: "27 milhões", icon: "ri-user-line" },
           ].map((stat) => (
             <div key={stat.label} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -106,7 +74,7 @@ export default function NewsletterSidebar() {
           ))}
         </div>
         <p className="text-[#0F2A1A] text-sm italic leading-relaxed mb-3">
-          "A newsletter da RE/MAX AGRO é a primeira coisa que leio toda segunda-feira. Informação de qualidade que me ajuda a tomar decisões melhores para minha fazenda."
+          "A newsletter da RE/MAX AGRO é leitura obrigatória toda segunda-feira. Em poucos minutos tenho o panorama completo do que aconteceu no agro e o que esperar da semana."
         </p>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-[#0F2A1A] flex items-center justify-center">

@@ -3,7 +3,6 @@ import HeroIntro from "@/components/newsletter/HeroIntro";
 import QuotationsPanel from "@/components/newsletter/QuotationsPanel";
 import NewsHighlights from "@/components/newsletter/NewsHighlights";
 import InsightsForecast from "@/components/newsletter/InsightsForecast";
-import NewsletterSidebar from "@/components/newsletter/NewsletterSidebar";
 import BrokersTeam from "@/components/newsletter/BrokersTeam";
 import SubscribeSection from "@/components/newsletter/SubscribeSection";
 import NewsletterFooter from "@/components/newsletter/NewsletterFooter";
@@ -22,22 +21,12 @@ export default function Home() {
           <QuotationsPanel />
         </div>
 
-        {/* Layout 2 colunas: conteúdo principal + sidebar */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Coluna principal */}
-          <div className="flex-1 min-w-0 space-y-10">
-            <NewsHighlights />
-            <InsightsForecast />
-            <BrokersTeam />
-            <SubscribeSection />
-          </div>
-
-          {/* Sidebar */}
-          <div className="w-full lg:w-[340px] flex-shrink-0">
-            <div className="lg:sticky lg:top-6">
-              <NewsletterSidebar />
-            </div>
-          </div>
+        {/* Conteúdo full-width */}
+        <div className="space-y-10">
+          <NewsHighlights />
+          <InsightsForecast />
+          <BrokersTeam />
+          <SubscribeSection />
         </div>
       </main>
 

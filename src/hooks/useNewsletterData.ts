@@ -8,8 +8,7 @@
 import { useMemo } from "react";
 import {
   quotations,
-  mainNews,
-  secondaryNews,
+  allNews,
   insights,
   brokers,
 } from "@/mocks/newsletter";
@@ -20,18 +19,20 @@ export interface QuotationItem {
   value: string;
   unit: string;
   change: number;
-  region: string;
+  description: string;
+  unitLabel: string;
 }
 
 export interface NewsItem {
   id: number;
-  category: string;
-  title: string;
-  summary?: string;
-  url?: string;
   date: string;
-  readTime?: string;
-  tag?: string;
+  dateLabel: string;
+  icon: string;
+  title: string;
+  summary: string;
+  source: string;
+  url: string;
+  image: string;
 }
 
 export interface InsightItem {
@@ -65,7 +66,7 @@ export interface NewsletterData {
 function getLastMonday(): Date {
   const today = new Date();
   const day = today.getDay(); // 0=Dom, 1=Seg...
-  const diff = day === 0 ? 6 : day - 1; // dias desde segunda
+  const diff = day === 0 ? 6 : day - 1;
   const monday = new Date(today);
   monday.setDate(today.getDate() - diff);
   monday.setHours(0, 0, 0, 0);
@@ -82,7 +83,6 @@ function formatDate(date: Date): string {
 }
 
 function getEditionNumber(): string {
-  // Calcula edição baseado em semanas desde o lançamento (18/04/2026)
   const launch = new Date("2026-04-18");
   const monday = getLastMonday();
   const diffMs = monday.getTime() - launch.getTime();
@@ -90,7 +90,7 @@ function getEditionNumber(): string {
   return String(weeks).padStart(3, "0");
 }
 
-const CACHE_KEY = "remax_agro_newsletter_data";
+const CACHE_KEY = "remax_agro_newsletter_data_v2";
 
 function loadFromCache(): NewsletterData | null {
   try {
@@ -99,7 +99,6 @@ function loadFromCache(): NewsletterData | null {
     const cached = JSON.parse(raw) as NewsletterData & { _cachedAt: string };
     const cachedAt = new Date(cached._cachedAt);
     const lastMonday = getLastMonday();
-    // Cache válido se foi gerado após a última segunda-feira
     if (cachedAt >= lastMonday) return cached;
     return null;
   } catch {
@@ -120,12 +119,22 @@ function saveToCache(data: NewsletterData): void {
 
 export function useNewsletterData(): NewsletterData {
   return useMemo(() => {
-    // Tenta cache primeiro
     const cached = loadFromCache();
     if (cached) return cached;
 
-    // Monta dados frescos (troque por fetch real aqui no futuro)
     const monday = getLastMonday();
+    const news: NewsItem[] = allNews.map((n) => ({
+      id: n.id,
+      date: n.date,
+      dateLabel: n.dateLabel,
+      icon: n.icon,
+      title: n.title,
+      summary: n.summary,
+      source: n.source,
+      url: n.url,
+      image: n.image,
+    }));
+
     const data: NewsletterData = {
       editionNumber: getEditionNumber(),
       editionDate: formatDate(monday),
@@ -135,25 +144,11 @@ export function useNewsletterData(): NewsletterData {
         value: q.value,
         unit: q.unit,
         change: q.change,
-        region: q.region,
+        description: q.description,
+        unitLabel: q.unitLabel,
       })),
-      mainNews: mainNews.map((n) => ({
-        id: n.id,
-        category: n.category,
-        title: n.title,
-        summary: n.summary,
-        url: `https://agro.remax.com.br/blog/${n.id}`, // mock URL
-        date: n.date,
-        readTime: n.readTime,
-        tag: n.tag,
-      })),
-      secondaryNews: secondaryNews.map((n) => ({
-        id: n.id,
-        category: n.category,
-        title: n.title,
-        url: `https://agro.remax.com.br/blog/${n.id}`, // mock URL
-        date: n.date,
-      })),
+      mainNews: news.slice(0, 6),
+      secondaryNews: news.slice(6),
       insights: insights.map((i) => ({
         id: i.id,
         title: i.title,

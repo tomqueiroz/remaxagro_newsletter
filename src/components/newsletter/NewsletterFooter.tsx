@@ -10,7 +10,7 @@ export default function NewsletterFooter() {
             <img
               src="/images/logo-white.png"
               alt="RE/MAX Commercial Divisão Agro powered by DATAGRO"
-              className="h-14 object-contain mb-4"
+              className="w-[200px] object-contain mb-4"
             />
             <p className="text-white/60 text-sm leading-relaxed">
               A newsletter semanal mais relevante do agronegócio brasileiro. Curadoria exclusiva da RE/MAX AGRO powered by DATAGRO para proprietários rurais, investidores e profissionais do setor.
@@ -95,7 +95,10 @@ export default function NewsletterFooter() {
       <div className="border-t border-white/10 bg-[#0a1f12]">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="text-white font-bold text-sm">📄 Baixe esta edição em PDF</p>
+            <div className="flex items-center gap-2">
+              <i className="ri-file-pdf-line text-[#C9A84C] text-base"></i>
+              <p className="text-white font-bold text-sm">Baixe esta edição em PDF</p>
+            </div>
             <p className="text-white/50 text-xs mt-0.5">Com cotações, notícias linkáveis, contatos e opt-out — para ler offline ou compartilhar.</p>
           </div>
           <DownloadButtons variant="footer" />
@@ -108,7 +111,7 @@ export default function NewsletterFooter() {
             © 2026 RE/MAX AGRO powered by DATAGRO · Todos os direitos reservados
           </p>
           <div className="flex items-center gap-4">
-            <a href="#" className="text-white/40 text-xs hover:text-[#C9A84C] transition-colors cursor-pointer">Descadastrar</a>
+            <a href="#" className="text-white/40 text-xs hover:text-[#C9A84C] transition-colors cursor-pointer">Cancelar Inscrição</a>
             <span className="text-white/20">|</span>
             <a href="#" className="text-white/40 text-xs hover:text-[#C9A84C] transition-colors cursor-pointer">Política de Privacidade</a>
             <span className="text-white/20">|</span>

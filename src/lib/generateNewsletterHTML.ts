@@ -57,7 +57,7 @@ export function generateNewsletterHTML(data: NewsletterData): string {
         <p style="margin:0 0 3px;font-size:12px;font-weight:700;color:${q.change >= 0 ? "#059669" : "#DC2626"};font-family:Arial,sans-serif;">
           ${q.change >= 0 ? "▲" : "▼"} ${Math.abs(q.change)}%
         </p>
-        <p style="margin:0;font-size:9px;color:#9A9A9A;font-family:Arial,sans-serif;">${q.region}</p>
+        <p style="margin:0;font-size:9px;color:#9A9A9A;font-family:Arial,sans-serif;">${q.description}</p>
       </td></tr>
     </table>
   </div>
@@ -67,11 +67,11 @@ export function generateNewsletterHTML(data: NewsletterData): string {
   const mainNewsHTML = mainNews.map(n => `
   <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:14px;background:#ffffff;border-radius:10px;border-left:4px solid #C9A84C;">
     <tr><td style="padding:16px 18px;">
-      <p style="margin:0 0 5px;font-size:10px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:1px;font-family:Arial,sans-serif;">${n.category}</p>
+      <p style="margin:0 0 5px;font-size:10px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:1px;font-family:Arial,sans-serif;">Destaque · ${n.source}</p>
       <h3 style="margin:0 0 9px;font-size:17px;color:#1E1E1E;line-height:1.4;font-family:Georgia,'Times New Roman',serif;">${n.title}</h3>
       ${n.summary ? `<p style="margin:0 0 12px;font-size:13px;color:#5A5A5A;line-height:1.65;font-family:Arial,sans-serif;">${n.summary}</p>` : ""}
       <table cellpadding="0" cellspacing="0" border="0"><tr>
-        <td style="font-size:11px;color:#9A9A9A;font-family:Arial,sans-serif;">${n.date}${n.readTime ? ` · ${n.readTime}` : ""}</td>
+        <td style="font-size:11px;color:#9A9A9A;font-family:Arial,sans-serif;">${n.dateLabel}</td>
         ${n.url ? `<td style="padding-left:14px;"><a href="${n.url}" style="font-size:11px;font-weight:700;color:#C9A84C;font-family:Arial,sans-serif;">Leia o artigo →</a></td>` : ""}
       </tr></table>
     </td></tr>
@@ -86,12 +86,12 @@ export function generateNewsletterHTML(data: NewsletterData): string {
           <div style="width:5px;height:5px;border-radius:50%;background:#C9A84C;display:inline-block;">&nbsp;</div>
         </td>
         <td style="padding-left:6px;">
-          <p style="margin:0 0 2px;font-size:9px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:0.8px;font-family:Arial,sans-serif;">${n.category}</p>
+          <p style="margin:0 0 2px;font-size:9px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:0.8px;font-family:Arial,sans-serif;">${n.source}</p>
           ${n.url
             ? `<a href="${n.url}" style="font-size:12px;color:#ffffff;text-decoration:none;line-height:1.45;font-family:Arial,sans-serif;display:block;">${n.title}</a>`
             : `<p style="margin:0;font-size:12px;color:#ffffff;line-height:1.45;font-family:Arial,sans-serif;">${n.title}</p>`
           }
-          <p style="margin:3px 0 0;font-size:10px;color:rgba(255,255,255,0.4);font-family:Arial,sans-serif;">${n.date}</p>
+          <p style="margin:3px 0 0;font-size:10px;color:rgba(255,255,255,0.4);font-family:Arial,sans-serif;">${n.dateLabel}</p>
         </td>
       </tr></table>
     </td>

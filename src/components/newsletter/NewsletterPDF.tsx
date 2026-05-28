@@ -30,6 +30,8 @@ import {
 } from "@react-pdf/renderer";
 import type { NewsletterData } from "@/hooks/useNewsletterData";
 
+// Imagens: passadas como props para suportar URLs absolutas em runtime (necessário para @react-pdf/renderer no browser)
+
 // ── Paleta ────────────────────────────────────────────────────────────────────
 const C = {
   navy:      "#0D1F35",
@@ -73,10 +75,8 @@ const S = StyleSheet.create({
   },
   inner: {
     backgroundColor: C.white,
-    maxWidth: 580,
-    marginHorizontal: "auto",
+    width: "100%",
     borderRadius: 10,
-    overflow: "hidden",
   },
 
   // ── Header ──
@@ -812,7 +812,8 @@ const S = StyleSheet.create({
     backgroundColor: C.navy,
     paddingHorizontal: 28,
     paddingVertical: 22,
-    borderRadius: "0 0 10px 10px",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   footerTopRow: {
     flexDirection: "row",
@@ -902,11 +903,18 @@ function SectionPill({ children }: { children: string }) {
 
 // ── NewsletterPDF (componente principal) ─────────────────────────────────────
 
-interface Props {
-  data: NewsletterData;
+export interface PDFImageUrls {
+  logoWhite: string;
+  hero: string;
+  selo: string;
 }
 
-export function NewsletterPDF({ data }: Props) {
+interface Props {
+  data: NewsletterData;
+  images: PDFImageUrls;
+}
+
+export function NewsletterPDF({ data, images }: Props) {
   const {
     editionNumber,
     editionDate,
@@ -942,7 +950,7 @@ export function NewsletterPDF({ data }: Props) {
             <View style={S.headerBg}>
               <View style={S.headerRow}>
                 <Image
-                  src="/images/logo-white.png"
+                  src={images.logoWhite}
                   style={S.headerLogoImg}
                 />
                 <View style={S.headerRight}>
@@ -961,7 +969,7 @@ export function NewsletterPDF({ data }: Props) {
 
             {/* ─── 2. HERO ───────────────────────────────────────────── */}
             <View style={S.heroBg}>
-              <Image src="/images/hero-agro-newsletter.jpg" style={S.heroImage} />
+              <Image src={images.hero} style={S.heroImage} />
               <View style={S.heroOverlay}>
                 <Text style={S.heroEyebrow}>✦ Safra 2025/26 · Inteligência Agro</Text>
                 <Text style={S.heroTitle}>O Agro que Transforma Propriedades em Patrimônio</Text>
@@ -1041,7 +1049,7 @@ export function NewsletterPDF({ data }: Props) {
                     <Text style={q.change >= 0 ? S.quoteUp : S.quoteDown}>
                       {q.change >= 0 ? "▲" : "▼"} {Math.abs(q.change)}%
                     </Text>
-                    <Text style={S.quoteRegion}>{q.region}</Text>
+                    <Text style={S.quoteRegion}>{q.description}</Text>
                   </View>
                 ))}
               </View>
@@ -1055,20 +1063,20 @@ export function NewsletterPDF({ data }: Props) {
 
             {/* ─── 6. TOP NOTÍCIAS + SIDEBAR ─────────────────────────── */}
             <View style={S.newsBg}>
-              <SectionPill>📰 Top Notícias Agro da Semana</SectionPill>
-              <Text style={S.sectionTitle}>Principais Movimentos do Agro</Text>
+              <SectionPill>Principais Notícias do Agro · Última Semana</SectionPill>
+              <Text style={S.sectionTitle}>Principais Notícias do Agro</Text>
               <View style={S.newsRow}>
                 {/* Coluna principal */}
                 <View style={S.newsMain}>
                   {mainNews.map((n) => (
                     <View key={n.id} style={S.newsCard}>
-                      <Text style={S.newsCategory}>{n.category}</Text>
+                      <Text style={S.newsCategory}>Destaque</Text>
                       <Text style={S.newsTitle}>{n.title}</Text>
                       {n.summary ? (
                         <Text style={S.newsSummary}>{n.summary}</Text>
                       ) : null}
                       <View style={S.newsMeta}>
-                        <Text style={S.newsDate}>{n.date}{n.readTime ? ` · ${n.readTime}` : ""}</Text>
+                        <Text style={S.newsDate}>{n.dateLabel} · Fonte: {n.source}</Text>
                         {n.url ? (
                           <Link src={n.url} style={S.newsLink}>Leia o artigo →</Link>
                         ) : null}
@@ -1087,13 +1095,13 @@ export function NewsletterPDF({ data }: Props) {
                       <View key={n.id} style={S.sidebarItem}>
                         <View style={S.sidebarDot} />
                         <View style={S.sidebarItemContent}>
-                          <Text style={S.sidebarCat}>{n.category}</Text>
+                          <Text style={S.sidebarCat}>{n.source}</Text>
                           {n.url ? (
                             <Link src={n.url} style={S.sidebarTitle}>{n.title}</Link>
                           ) : (
                             <Text style={S.sidebarTitle}>{n.title}</Text>
                           )}
-                          <Text style={S.sidebarDate}>{n.date}</Text>
+                          <Text style={S.sidebarDate}>{n.dateLabel}</Text>
                         </View>
                       </View>
                     ))}
@@ -1239,7 +1247,7 @@ export function NewsletterPDF({ data }: Props) {
             <View style={S.brokersBg}>
               <View style={S.brokersHeaderRow}>
                 <Link src="https://agro.remax.com.br/corretores-especializados/">
-                  <Image src="/images/selo-corretor-certificado.png" style={S.brokersSeloImg} />
+                  <Image src={images.selo} style={S.brokersSeloImg} />
                 </Link>
                 <View style={S.brokersHeaderText}>
                   <SectionPill>Corretores Certificados</SectionPill>
@@ -1297,7 +1305,7 @@ export function NewsletterPDF({ data }: Props) {
             {/* ─── 12. FOOTER LGPD ───────────────────────────────────── */}
             <View style={S.footerBg}>
               <View style={S.footerTopRow}>
-                <Image src="/images/logo-white.png" style={S.footerLogoImg} />
+                <Image src={images.logoWhite} style={S.footerLogoImg} />
                 <View style={S.footerSocials}>
                   {[
                     { label: "Instagram", url: "https://www.instagram.com/remaxcommercialdivsaoagro" },

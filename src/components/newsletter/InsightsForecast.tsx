@@ -17,10 +17,10 @@ export default function InsightsForecast() {
           <span className="text-[#C9A84C] text-xs font-bold uppercase tracking-widest">Radar da Próxima Semana</span>
         </div>
         <h2 className="text-[#0F2A1A] text-2xl md:text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-          Insights & O Que Vem Por Aí
+          O Que Vem Por Aí
         </h2>
         <p className="text-[#5a5a5a] text-sm mt-2">
-          Fique à frente do mercado. Prepare-se para os movimentos mais importantes das próximas semanas.
+          Antecipe tendências e se prepare para os movimentos que vão impactar o agronegócio nas próximas semanas.
         </p>
       </div>
 
@@ -63,20 +63,20 @@ export default function InsightsForecast() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#C9A84C]/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
           <div>
-            <p className="text-[#C9A84C] text-xs font-bold uppercase tracking-widest mb-2">Análise Exclusiva DATAGRO</p>
+            <p className="text-[#C9A84C] text-xs font-bold uppercase tracking-widest mb-2">RE/MAX AGRO · DATAGRO</p>
             <h3 className="text-white text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Relatório Completo: Perspectivas do Agro para Q2 2026
+              Receba Toda Segunda-Feira na Sua Caixa de Entrada
             </h3>
             <p className="text-white/60 text-sm max-w-lg">
-              Acesse o relatório completo com projeções de safra, análise de preços, mapeamento de oportunidades em terras agrícolas e muito mais. Exclusivo para assinantes.
+              Assine gratuitamente e tenha acesso semanal a cotações, análises de mercado de terras, notícias curadas e a agenda dos principais eventos do agronegócio brasileiro.
             </p>
           </div>
           <a
             href="#inscricao"
             className="whitespace-nowrap flex-shrink-0 inline-flex items-center gap-2 bg-[#C9A84C] text-[#0F2A1A] font-bold px-6 py-3 rounded-full hover:bg-[#e0bc5a] transition-all duration-200 cursor-pointer text-sm"
           >
-            <i className="ri-file-chart-line"></i>
-            Acessar Relatório
+            <i className="ri-mail-send-line"></i>
+            Assinar Gratuitamente
           </a>
         </div>
       </div>
