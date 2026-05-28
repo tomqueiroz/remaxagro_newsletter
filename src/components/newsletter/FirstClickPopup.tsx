@@ -1,48 +1,46 @@
-import { useState, useEffect, useRef } from "react";
+/**
+ * FirstClickPopup
+ * Pop-up de cadastro obrigatório exibido no primeiro clique de um novo usuário.
+ * Se o usuário já se cadastrou (localStorage "remax_agro_registered"), não exibe.
+ * Ao se cadastrar com sucesso, sinaliza via localStorage para que o ExitIntentPopup não apareça.
+ */
 
-const REGISTERED_KEY = "remax_agro_registered";
-const DISMISSED_KEY = "exit_popup_dismissed_remax";
+import { useState, useEffect, useCallback } from "react";
 
-export default function ExitIntentPopup() {
+const STORAGE_KEY = "remax_agro_registered";
+const POPUP_SHOWN_KEY = "remax_agro_first_click_shown";
+
+export default function FirstClickPopup() {
   const [visible, setVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lgpdChecked, setLgpdChecked] = useState(false);
   const [lgpdError, setLgpdError] = useState(false);
-  const triggered = useRef(false);
-  const mobileTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    // Não exibe se o usuário já se cadastrou ou já dispensou
-    const alreadyRegistered = localStorage.getItem(REGISTERED_KEY);
-    const dismissed = sessionStorage.getItem(DISMISSED_KEY);
-    if (alreadyRegistered || dismissed) return;
+  // Listener de primeiro clique
+  const handleFirstClick = useCallback(() => {
+    const alreadyRegistered = localStorage.getItem(STORAGE_KEY);
+    const alreadyShown = sessionStorage.getItem(POPUP_SHOWN_KEY);
 
-    // Desktop: detecta saída do mouse pelo topo da página
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 5 && !triggered.current) {
-        triggered.current = true;
-        setVisible(true);
-      }
-    };
-
-    // Mobile: dispara após 40s de leitura
-    mobileTimer.current = setTimeout(() => {
-      if (!triggered.current && window.innerWidth < 768) {
-        triggered.current = true;
-        setVisible(true);
-      }
-    }, 40000);
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (mobileTimer.current) clearTimeout(mobileTimer.current);
-    };
+    if (!alreadyRegistered && !alreadyShown) {
+      sessionStorage.setItem(POPUP_SHOWN_KEY, "1");
+      setVisible(true);
+    }
+    // Remove o listener após o primeiro clique
+    document.removeEventListener("click", handleFirstClick);
   }, []);
 
+  useEffect(() => {
+    // Não adiciona o listener se o usuário já está cadastrado
+    if (localStorage.getItem(STORAGE_KEY)) return;
+
+    document.addEventListener("click", handleFirstClick);
+    return () => {
+      document.removeEventListener("click", handleFirstClick);
+    };
+  }, [handleFirstClick]);
+
   const close = () => {
-    sessionStorage.setItem(DISMISSED_KEY, "1");
     setVisible(false);
   };
 
@@ -55,10 +53,12 @@ export default function ExitIntentPopup() {
     setLgpdError(false);
     setLoading(true);
     try {
+      // Simula envio — substituir por chamada real à API
       await new Promise((r) => setTimeout(r, 900));
-      // Marca como cadastrado para evitar pop-up de saída em futuras sessões
-      localStorage.setItem(REGISTERED_KEY, "1");
-      sessionStorage.setItem(DISMISSED_KEY, "1");
+
+      // Marca o usuário como cadastrado para esta e futuras sessões
+      localStorage.setItem(STORAGE_KEY, "1");
+
       setSubmitted(true);
       setTimeout(() => setVisible(false), 3000);
     } finally {
@@ -70,32 +70,21 @@ export default function ExitIntentPopup() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      className="fixed inset-0 z-[110] flex items-center justify-center px-4"
       style={{ animation: "fadeIn 0.3s ease both" }}
     >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-[#0F2A1A]/80 backdrop-blur-sm cursor-pointer"
-        onClick={close}
-      ></div>
+      {/* Backdrop — NÃO fecha ao clicar (cadastro obrigatório) */}
+      <div className="absolute inset-0 bg-[#0F2A1A]/85 backdrop-blur-sm" />
 
       {/* Modal */}
       <div
         className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden"
         style={{ animation: "popIn 0.4s cubic-bezier(0.16,1,0.3,1) both" }}
       >
-        {/* Topo verde escuro com logo */}
+        {/* Topo verde escuro */}
         <div className="bg-[#0F2A1A] px-6 pt-6 pb-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[#C9A84C]/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#1A4A2A]/60 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-
-          <button
-            onClick={close}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer z-10"
-            aria-label="Fechar"
-          >
-            <i className="ri-close-line text-base"></i>
-          </button>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#C9A84C]/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#1A4A2A]/60 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
           <div className="relative z-10 text-center">
             <img
@@ -104,16 +93,19 @@ export default function ExitIntentPopup() {
               className="h-10 object-contain mx-auto mb-4"
             />
             <div className="inline-flex items-center gap-2 bg-[#C9A84C] text-[#0F2A1A] text-xs font-bold px-4 py-1.5 rounded-full mb-3 uppercase tracking-wider">
-              <i className="ri-mail-star-line text-xs"></i>
-              Lista Exclusiva · 100% Gratuito
+              <i className="ri-lock-unlock-line text-xs"></i>
+              Acesso Gratuito · Conteúdo Exclusivo
             </div>
             <h2
               className="text-white text-xl md:text-2xl font-bold leading-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Não vá embora sem entrar para a lista exclusiva do
+              Cadastre-se para acessar o
               <span className="text-[#C9A84C] italic"> Agro Estratégico</span>
             </h2>
+            <p className="text-white/70 text-sm mt-2">
+              Informação curada para quem decide no campo — 100% gratuito.
+            </p>
           </div>
         </div>
 
@@ -124,24 +116,22 @@ export default function ExitIntentPopup() {
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-emerald-100 mx-auto mb-4">
                 <i className="ri-check-double-line text-emerald-600 text-2xl"></i>
               </div>
-              <h3 className="text-[#0F2A1A] font-bold text-lg mb-2">Bem-vindo à lista exclusiva! 🌱</h3>
+              <h3 className="text-[#0F2A1A] font-bold text-lg mb-2">
+                Bem-vindo à newsletter exclusiva do agro!
+              </h3>
               <p className="text-[#5a5a5a] text-sm">
-                Você receberá toda segunda-feira a newsletter mais estratégica do agronegócio brasileiro, além de informativos e convites para eventos exclusivos.
+                Você agora faz parte da comunidade RE/MAX AGRO. Acompanhe as melhores análises e cotações do setor toda semana.
               </p>
             </div>
           ) : (
             <>
-              <p className="text-[#5a5a5a] text-sm leading-relaxed mb-4">
-                Receba toda segunda-feira o que realmente importa no campo: cotações, destaques de mercado, análises DATAGRO e convites exclusivos para eventos do setor.
-              </p>
-
               {/* Benefícios */}
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {[
                   { icon: "ri-newspaper-line", text: "Newsletter Semanal" },
-                  { icon: "ri-bar-chart-line", text: "Análises DATAGRO" },
-                  { icon: "ri-calendar-event-line", text: "Eventos Exclusivos" },
-                  { icon: "ri-notification-line", text: "Informativos Especiais" },
+                  { icon: "ri-bar-chart-line", text: "Cotações Exclusivas" },
+                  { icon: "ri-map-pin-line", text: "Mercado de Terras" },
+                  { icon: "ri-shield-check-line", text: "Análises DATAGRO" },
                 ].map((b) => (
                   <div key={b.text} className="flex items-center gap-2 bg-[#F5F0E8] rounded-xl px-3 py-2">
                     <i className={`${b.icon} text-[#C9A84C] text-sm`}></i>
@@ -173,7 +163,11 @@ export default function ExitIntentPopup() {
                 />
 
                 {/* LGPD Checkbox */}
-                <div className={`rounded-xl border p-3 ${lgpdError ? "border-red-400 bg-red-50" : "border-[#d8d0c0] bg-[#F5F0E8]"}`}>
+                <div
+                  className={`rounded-xl border p-3 ${
+                    lgpdError ? "border-red-400 bg-red-50" : "border-[#d8d0c0] bg-[#F5F0E8]"
+                  }`}
+                >
                   <label className="flex items-start gap-2.5 cursor-pointer">
                     <input
                       type="checkbox"
@@ -186,11 +180,15 @@ export default function ExitIntentPopup() {
                     />
                     <span className="text-[#3a3a3a] text-xs leading-relaxed">
                       Li e aceito os{" "}
-                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A] cursor-pointer">Termos de Uso</a>{" "}
+                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A]">
+                        Termos de Uso
+                      </a>{" "}
                       e a{" "}
-                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A] cursor-pointer">Política de Privacidade</a>.
-                      Consinto com o tratamento dos meus dados pessoais pela RE/MAX AGRO e DATAGRO para envio de comunicações, conforme a{" "}
-                      <strong>LGPD (Lei nº 13.709/2018)</strong>. Posso revogar meu consentimento a qualquer momento.
+                      <a href="#" className="text-[#C9A84C] underline hover:text-[#0F2A1A]">
+                        Política de Privacidade
+                      </a>
+                      . Consinto com o tratamento dos meus dados pela RE/MAX AGRO e DATAGRO,
+                      conforme a <strong>LGPD (Lei nº 13.709/2018)</strong>.
                     </span>
                   </label>
                   {lgpdError && (
@@ -204,28 +202,24 @@ export default function ExitIntentPopup() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#0F2A1A] hover:bg-[#1A4A2A] text-white font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-full bg-[#C9A84C] hover:bg-[#e0bc5a] text-[#0F2A1A] font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {loading ? (
                     <>
                       <i className="ri-loader-4-line animate-spin"></i>
-                      Inscrevendo...
+                      Cadastrando...
                     </>
                   ) : (
                     <>
-                      <i className="ri-mail-send-line"></i>
-                      Quero Fazer Parte da Lista Exclusiva
+                      <i className="ri-user-add-line"></i>
+                      Quero Acesso Gratuito
                     </>
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={close}
-                  className="w-full text-[#9a9a9a] text-xs hover:text-[#5a5a5a] transition-colors cursor-pointer py-1"
-                >
-                  Não, prefiro perder os informativos exclusivos
-                </button>
+                <p className="text-center text-[#9a9a9a] text-xs">
+                  Sem spam. Cancele quando quiser.
+                </p>
               </form>
             </>
           )}
