@@ -79,7 +79,7 @@ export default function HeroIntro() {
         <div className="absolute bottom-0 left-0 right-0 bg-[#0F2A1A]/80 backdrop-blur-sm border-t border-[#C9A84C]/20">
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: "ri-mail-send-line", value: "Toda Segunda", label: "Frequência de Envio" },
+{ icon: "ri-mail-send-line", value: "Toda Semana", label: "Frequência Semanal" },
               { icon: "ri-shield-check-line", value: "Curadoria Especializada", label: "Conteúdo" },
               { icon: "ri-award-line", value: "DATAGRO", label: "Parceiro Oficial" },
               { icon: "ri-building-line", value: "RE/MAX AGRO", label: "Maior Rede do Setor" },
