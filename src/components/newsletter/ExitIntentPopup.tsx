@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 
-const REGISTERED_KEY = "remax_agro_registered";
-const DISMISSED_KEY = "exit_popup_dismissed_remax";
-
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -13,10 +10,8 @@ export default function ExitIntentPopup() {
   const mobileTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // Não exibe se o usuário já se cadastrou ou já dispensou
-    const alreadyRegistered = localStorage.getItem(REGISTERED_KEY);
-    const dismissed = sessionStorage.getItem(DISMISSED_KEY);
-    if (alreadyRegistered || dismissed) return;
+    const dismissed = sessionStorage.getItem("exit_popup_dismissed_remax");
+    if (dismissed) return;
 
     // Desktop: detecta saída do mouse pelo topo da página
     const handleMouseLeave = (e: MouseEvent) => {
@@ -42,7 +37,7 @@ export default function ExitIntentPopup() {
   }, []);
 
   const close = () => {
-    sessionStorage.setItem(DISMISSED_KEY, "1");
+    sessionStorage.setItem("exit_popup_dismissed_remax", "1");
     setVisible(false);
   };
 
@@ -56,11 +51,11 @@ export default function ExitIntentPopup() {
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 900));
-      // Marca como cadastrado para evitar pop-up de saída em futuras sessões
-      localStorage.setItem(REGISTERED_KEY, "1");
-      sessionStorage.setItem(DISMISSED_KEY, "1");
       setSubmitted(true);
-      setTimeout(() => setVisible(false), 3000);
+      setTimeout(() => {
+        sessionStorage.setItem("exit_popup_dismissed_remax", "1");
+        setVisible(false);
+      }, 3000);
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 /**
  * DownloadButtons
  * Grupo de botões de download: PDF e HTML de email.
- * OCULTOS conforme configuração — manter o código mas não renderizar.
+ * Cada um é standalone (não depende do outro).
  */
 
 import { useState } from "react";
@@ -145,9 +145,21 @@ interface DownloadGroupProps {
   variant?: "header" | "footer";
 }
 
-export default function DownloadButtons(_props: DownloadGroupProps) {
-  // Botões de download ocultos — remover o null para reativar
-  return null;
+export default function DownloadButtons({ variant = "header" }: DownloadGroupProps) {
+  if (variant === "footer") {
+    return (
+      <div className="flex flex-col sm:flex-row gap-3">
+        <DownloadPDFButton variant="footer" />
+        <DownloadHTMLButton variant="footer" />
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-1.5">
+      <DownloadPDFButton variant="header" />
+      <DownloadHTMLButton variant="header" />
+    </div>
+  );
 }
 
 // ─── Util ─────────────────────────────────────────────────────────────────────
