@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DownloadButtons from "./DownloadButtons";
 
 const navItems = [
   { label: "Destaques", href: "#destaques" },
@@ -66,6 +67,7 @@ export default function NewsletterHeader() {
               </a>
             ))}
             <div className="ml-auto flex items-center gap-2">
+              <DownloadButtons variant="header" />
               <a
                 href="#inscricao"
                 className="whitespace-nowrap px-5 py-2 bg-[#CC0000] text-white text-xs font-bold rounded-full hover:bg-[#e60000] transition-all duration-200 cursor-pointer"
@@ -87,6 +89,9 @@ export default function NewsletterHeader() {
                   {item.label}
                 </a>
               ))}
+              <div className="mt-2 mx-4">
+                <DownloadButtons variant="header" />
+              </div>
               <a
                 href="#inscricao"
                 className="mt-1 mx-4 py-2.5 bg-[#CC0000] text-white text-sm font-bold rounded-full text-center cursor-pointer"
