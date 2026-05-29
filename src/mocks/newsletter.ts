@@ -5,286 +5,29 @@ import { IMAGES } from "@/assets/images";
 export interface NewsItem {
   id: number;
   date: string;
-  dateLabel: string; // ex: "30 Abr 2026"
-  icon: string;       // remix icon class
+  dateLabel: string;
+  icon: string;
   title: string;
   summary: string;
-  source: string;     // nome da fonte
+  source: string;
   url: string;
   image: string;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-// Retorna as 6 notícias mais recentes como destaques
 export const getMainNews = (): NewsItem[] => allNews.slice(0, 6);
-
-// Retorna as demais notícias para a lista secundária
 export const getSecondaryNews = (): NewsItem[] => allNews.slice(6);
 
-// ── Todas as notícias (ordenadas por data, mais recente primeiro) ──────────────
+// ── Todas as notícias — sem notícias antigas ────────────────────────────────────
+// As notícias da semana são gerenciadas em src/mocks/weekNews.ts
 
-export const allNews: NewsItem[] = [
-  // ── 30/04 ──────────────────────────────────────────────────────────────
-  {
-    id: 1,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-tractor-line",
-    title: "Agrishow: resignados com cenário atual, fabricantes veem cautela do produtor para compra de máquinas agrícolas",
-    summary: "Custos de produção elevados, juros altos, preços das principais commodities pressionados e instabilidade geopolítica global desenham um cenário de freio nos investimentos por parte dos produtores rurais.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/agribusiness/12/1115998/agrishow-resignados-com-cenario-atual-fabricantes-veem-cautela-do-produtor-para-compra-de-maquinas-agricolas",
-    image: IMAGES.NEWS_MACHINES_1,
-  },
-  {
-    id: 2,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-seedling-line",
-    title: "Esmagamento de soja no Mato Grosso aumenta neste início de 2026, apesar da queda na margem das indústrias",
-    summary: "Estado processou 3,30 milhões de toneladas da oleaginosa no 1º trimestre, crescimento anual de 10,2%, mesmo com compressão das margens industriais.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/soy/10/1115846/esmagamento-de-soja-no-mato-grosso-aumenta-neste-inicio-de-2026-apesar-da-queda-na-margem-das-industrias",
-    image: IMAGES.NEWS_SUGARCANE_1,
-  },
-  {
-    id: 3,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-gas-station-line",
-    title: "Coalizão dos Biocombustíveis pressiona governo por aumento do B17 e E32 em reunião do CNPE",
-    summary: "Setor defende avanço das misturas como estratégia para conter a inflação dos combustíveis e ampliar o uso de biocombustíveis na matriz energética nacional.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/sugar-etanol/2/1115848/coalizao-dos-biocombustiveis-pressiona-governo-por-aumento-do-b17-e-e32-em-reuniao-do-cnpe",
-    image: IMAGES.NEWS_BIOFUEL_1,
-  },
-  {
-    id: 4,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-restaurant-2-line",
-    title: "Produção de ovos no Brasil atinge recorde de 62,3 bilhões de unidades em 2025",
-    summary: "Consumo médio per capita chegou a 288 unidades no ano passado, conforme relatório anual da Associação Brasileira de Proteína Animal (ABPA).",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/livestock/5/1115897/producao-de-ovos-no-brasil-atinge-recorde-de-623-bilhoes-de-unidades-em-2025",
-    image: IMAGES.NEWS_EGGS_3,
-  },
-  {
-    id: 5,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-building-2-line",
-    title: "Petrobras retoma produção de ureia na Ansa com investimento de R$ 870 milhões",
-    summary: "Unidade de fertilizantes nitrogenados no Paraná volta à operação após longo período parada, ampliando a oferta doméstica de insumos para o agronegócio.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/fertilizers/16/1116226/petrobras-retoma-producao-de-ureia-na-ansa",
-    image: IMAGES.NEWS_FERTILIZER_1,
-  },
-  {
-    id: 6,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-bar-chart-box-line",
-    title: "Deral revisa safra do Paraná com queda para soja, milho safrinha e trigo",
-    summary: "Ajustes refletem condições de campo adversas, enquanto o milho total segue em alta no estado. Novo boletim será divulgado na quinta-feira.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/agroeconomia/deral-revisa-safra-do-parana-com-queda-para-soja-milho-safrinha-e-trigo",
-    image: IMAGES.NEWS_HARVEST_3,
-  },
-  {
-    id: 7,
-    date: "2026-04-30",
-    dateLabel: "30 Abr 2026",
-    icon: "ri-arrow-up-circle-line",
-    title: "Boi gordo sobe em abril, enquanto suínos e aves recuam, aponta Cepea",
-    summary: "Demanda externa sustenta a carne bovina em alta, enquanto o consumo interno pressiona as demais proteínas animais, segundo levantamento do Cepea.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/agroeconomia/boi-gordo-sobe-em-abril-enquanto-suinos-e-aves-recuam-aponta-cepea",
-    image: IMAGES.NEWS_CATTLE_4,
-  },
-  // ── 29/04 ──────────────────────────────────────────────────────────────
-  {
-    id: 8,
-    date: "2026-04-29",
-    dateLabel: "29 Abr 2026",
-    icon: "ri-bank-line",
-    title: "Produtores entregam ao Ministério da Agricultura proposta de R$ 623 bilhões para o Plano Safra 2026/27",
-    summary: "Documento elaborado pela CNA traz 10 pontos prioritários para o próximo ciclo. Setor defende R$ 4 bilhões para subvenção do seguro rural.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/agroeconomia/produtores-pedem-r-623-bilhoes-para-o-plano-safra-2026-27",
-    image: IMAGES.NEWS_CREDIT_4,
-  },
-  {
-    id: 9,
-    date: "2026-04-29",
-    dateLabel: "29 Abr 2026",
-    icon: "ri-shield-check-line",
-    title: "Governo proíbe uso de antimicrobianos como promotores de crescimento na pecuária",
-    summary: "Portaria do Mapa veta aditivos na alimentação animal e prevê prazo de transição de até 270 dias para adequação do setor produtivo.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/politica/governo-proibe-uso-de-antimicrobianos-como-promotores-de-crescimento-na-pecuaria",
-    image: IMAGES.NEWS_SWINE_1,
-  },
-  {
-    id: 10,
-    date: "2026-04-29",
-    dateLabel: "29 Abr 2026",
-    icon: "ri-scales-line",
-    title: "Produção de carne suína no Brasil superou 5,5 milhões de toneladas em 2025, aponta ABPA",
-    summary: "Relatório anual da ABPA reforça o protagonismo do Brasil no mercado global de proteínas animais e projeta expansão contínua para 2026.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/livestock/5/1114557/producao-de-carne-suina-no-brasil-superou-55-milhoes-de-toneladas-em-2025-aponta-abpa",
-    image: IMAGES.NEWS_SWINE_2,
-  },
-  {
-    id: 11,
-    date: "2026-04-29",
-    dateLabel: "29 Abr 2026",
-    icon: "ri-global-line",
-    title: "Acordo Mercosul-UE: oportunidades para frutas, citros, café e carnes, destaca ministro",
-    summary: "O tratado entra em vigor, ainda que em estágio provisório, a partir desta sexta-feira (1º), abrindo novos mercados para o agronegócio brasileiro na Europa.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/agribusiness/12/1114725/ministro-da-agricultura-destaca-oportunidades-para-frutas-citros-cafe-e-carnes-com-promulgacao-do-acordo-mercosul-ue",
-    image: IMAGES.NEWS_MERCOSUL_1,
-  },
-  {
-    id: 12,
-    date: "2026-04-29",
-    dateLabel: "29 Abr 2026",
-    icon: "ri-plant-line",
-    title: "Governo de SP anuncia pacote de R$ 455 milhões para impulsionar o agro paulista",
-    summary: "Recursos ampliam o crédito rural, o seguro agrícola e a regularização fundiária no estado, fortalecendo a posição de São Paulo no agronegócio nacional.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/agroeconomia/governo-de-sp-anuncia-pacote-de-r-455-milhoes-para-impulsionar-o-agro",
-    image: IMAGES.NEWS_CREDIT_1,
-  },
-  // ── 28/04 ──────────────────────────────────────────────────────────────
-  {
-    id: 13,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-oil-line",
-    title: "Emirados Árabes Unidos anunciam saída da Opep e Opep+",
-    summary: "A decisão pode enfraquecer o cartel e aumentar a volatilidade dos preços do petróleo, com reflexos diretos nos custos de insumos e frete agrícola no Brasil.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/petroleum/13/1113364/emirados-arabes-unidos-anunciam-saida-da-opep-e-opep",
-    image: IMAGES.NEWS_OIL_1,
-  },
-  {
-    id: 14,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-ship-line",
-    title: "Importações de algodão da Indonésia devem cair para 1,9 milhão de fardos em 2026/27, aponta USDA",
-    summary: "Brasil deve manter posição de principal fornecedor da pluma para o país asiático, mesmo com a retração prevista no volume total importado.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/cotton/1/1113621/importacoes-de-algodao-da-indonesia-devem-cair-para-19-milhao-de-fardos-em-202627-aponta-usda",
-    image: IMAGES.NEWS_COTTON_1,
-  },
-  {
-    id: 15,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-file-text-line",
-    title: "Lula promulga acordo Mercosul-UE e abre caminho para zona de livre comércio",
-    summary: "Tratado entra em vigor de forma provisória em maio, após quase três décadas de negociações. Agronegócio brasileiro é um dos maiores beneficiários do acordo.",
-    source: "UAGro",
-    url: "https://uagro.com.br/politica/lula-promulga-acordo-mercosul-ue-e-abre-caminho-para-zona-de-livre-comercio",
-    image: IMAGES.NEWS_MERCOSUL_3,
-  },
-  {
-    id: 16,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-map-pin-line",
-    title: "Colheita do milho de verão no Paraná atinge 98% da área, informa Deral",
-    summary: "Com a colheita praticamente encerrada, o Deral divulga nova atualização de safra na quinta-feira, consolidando os dados finais da temporada paranaense.",
-    source: "UAGro",
-    url: "https://uagro.com.br/agroeconomia/colheita-do-milho-de-verao-no-parana-atinge-98-da-area-informa-deral",
-    image: IMAGES.NEWS_CORN_3,
-  },
-  {
-    id: 17,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-line-chart-line",
-    title: "PIB do agronegócio cresce 12% em 2025",
-    summary: "Alta dos preços reais e avanço da produção agropecuária influenciam resultado histórico, segundo levantamento do Cepea em parceria com a CNA.",
-    source: "UAGro",
-    url: "https://uagro.com.br/agroeconomia/pib-do-agronegocio-cresce-12-em-2025",
-    image: IMAGES.NEWS_GDP_1,
-  },
-  {
-    id: 18,
-    date: "2026-04-28",
-    dateLabel: "28 Abr 2026",
-    icon: "ri-leaf-line",
-    title: "Conab projeta safra de 709,1 milhões de toneladas de cana em 2026/27",
-    summary: "Produção cresce 5,3% com clima favorável, enquanto o etanol avança e o açúcar recua levemente em relação à safra anterior.",
-    source: "UAGro",
-    url: "https://uagro.com.br/agroeconomia/conab-projeta-safra-de-7091-milhoes-de-toneladas-de-cana-em-2026-27",
-    image: IMAGES.NEWS_BIOFUEL_4,
-  },
-  // ── 27/04 ──────────────────────────────────────────────────────────────
-  {
-    id: 19,
-    date: "2026-04-27",
-    dateLabel: "27 Abr 2026",
-    icon: "ri-gas-station-line",
-    title: "E32 deve elevar demanda anual por etanol anidro em 1 bilhão de litros",
-    summary: "Aumento da mistura na gasolina deve impulsionar o setor sucroenergético e reduzir a dependência de importações de combustíveis fósseis.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/sugar-etanol/2/1112308/e32-deve-elevar-demanda-anual-por-etanol-anidro-em-1-bilhao-de-litros",
-    image: IMAGES.NEWS_BIOFUEL_3,
-  },
-  {
-    id: 20,
-    date: "2026-04-27",
-    dateLabel: "27 Abr 2026",
-    icon: "ri-arrow-up-line",
-    title: "Rebanho suíno do Brasil pode alcançar 53 milhões de cabeças até 2030, projeta FGV",
-    summary: "Expansão deve ser puxada pelo Sul do país, mas novas fronteiras ganham espaço progressivo na produção suinícola nacional, segundo projeção da FGV.",
-    source: "UAGro",
-    url: "https://www.uagro.com.br/agroeconomia/rebanho-suino-do-brasil-pode-alcancar-53-milhoes-de-cabecas-ate-2030-projeta-fgv",
-    image: IMAGES.NEWS_SWINE_4,
-  },
-  {
-    id: 21,
-    date: "2026-04-27",
-    dateLabel: "27 Abr 2026",
-    icon: "ri-tractor-line",
-    title: "Agrishow: fabricantes de máquinas agrícolas apostam em motores a etanol",
-    summary: "John Deere, CASE e Massey Ferguson apresentam protótipos e modelos conceito de maquinários movidos a biocombustíveis, sinalizando a transição energética no campo.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/sugar-etanol/2/1112509/agrishow-fabricantes-de-maquinas-agricolas-apostam-em-motores-a-etanol",
-    image: IMAGES.NEWS_MACHINES_1,
-  },
-  {
-    id: 22,
-    date: "2026-04-27",
-    dateLabel: "27 Abr 2026",
-    icon: "ri-plant-line",
-    title: "Safra mineira de cana 2026/27 deve crescer 11,6%, projeta Siamig Bioenergia",
-    summary: "Produção tem potencial para chegar a 83,3 milhões de toneladas, sobretudo pelo aumento de produtividade das lavouras, segundo o Siamig Bioenergia.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/sugar-etanol/2/1112320/safra-mineira-de-cana-202627-deve-crescer-116-projeta-siamig-bioenergia",
-    image: IMAGES.NEWS_BIOFUEL_4,
-  },
-  {
-    id: 23,
-    date: "2026-04-27",
-    dateLabel: "27 Abr 2026",
-    icon: "ri-microscope-line",
-    title: "BNDES aprova R$ 84 milhões para inovação em sementes sintéticas e combate a praga da cana",
-    summary: "Recursos apoiarão projetos do CTC para transformar o plantio da cana-de-açúcar e desenvolver variedades resistentes ao bicudo da cana.",
-    source: "DATAGRO",
-    url: "https://portal.datagro.com/pt/sugar-etanol/2/1112429/bndes-aprova-rdollar-84-milhoes-para-inovacao-em-sementes-sinteticas-e-combate-a-praga-da-cana",
-    image: IMAGES.NEWS_SEEDS_2,
-  },
-];
+export const allNews: NewsItem[] = [];
 
-// ── Exportações legadas (outros componentes) ───────────────────────────────────
+export const mainNews = allNews.slice(0, 6);
+export const secondaryNews = allNews.slice(6);
+
+// ── Cotações ───────────────────────────────────────────────────────────────────
 
 export const quotations = [
   {
@@ -369,31 +112,33 @@ export const quotations = [
   },
 ];
 
-export const mainNews = allNews.slice(0, 6);
-export const secondaryNews = allNews.slice(6);
+// ── Insights ───────────────────────────────────────────────────────────────────
 
 export const insights = [
   {
     id: 1,
     icon: "ri-calendar-event-line",
     title: "Semana de Decisão do COPOM — Impacto no Crédito Rural",
-    description: "Na próxima quarta-feira, o Banco Central decide sobre a Selic. Analistas da DATAGRO projetam manutenção da taxa, o que pode estabilizar as condições de financiamento para o Plano Safra 2025/26.",
-    date: "Previsto: 23 Abr 2026",
+    description:
+      "Na próxima quarta-feira, o Banco Central decide sobre a Selic. Analistas da DATAGRO projetam manutenção da taxa, o que pode estabilizar as condições de financiamento para o Plano Safra 2025/26.",
+    date: "Previsto: Jun 2026",
     urgency: "alta",
   },
   {
     id: 2,
     icon: "ri-global-line",
     title: "Relatório USDA de Oferta e Demanda Global — Soja e Milho em Foco",
-    description: "O USDA divulga na próxima semana seu relatório mensal de oferta e demanda. A expectativa é de revisão para cima nas projeções de produção brasileira, o que pode pressionar preços no curto prazo.",
-    date: "Previsto: 22 Abr 2026",
+    description:
+      "O USDA divulga seu relatório mensal de oferta e demanda. A expectativa é de revisão para cima nas projeções de produção brasileira, o que pode pressionar preços no curto prazo.",
+    date: "Previsto: Jun 2026",
     urgency: "media",
   },
   {
     id: 3,
     icon: "ri-bar-chart-line",
     title: "Janela de Comercialização de Soja: Momento Estratégico para Fixação de Preços",
-    description: "Com o real se desvalorizando frente ao dólar e a soja em Chicago em patamar elevado, especialistas da RE/MAX AGRO recomendam atenção especial à janela de comercialização das próximas duas semanas.",
+    description:
+      "Com o real em desvalorização frente ao dólar e a soja em Chicago em patamar elevado, especialistas da RE/MAX AGRO recomendam atenção especial à janela de comercialização das próximas semanas.",
     date: "Próximas 2 semanas",
     urgency: "alta",
   },
@@ -401,24 +146,14 @@ export const insights = [
     id: 4,
     icon: "ri-map-pin-line",
     title: "Agrishow 2026 — Maior Feira de Tecnologia Agrícola das Américas",
-    description: "A Agrishow acontece em Ribeirão Preto em maio de 2026. A RE/MAX AGRO estará presente com estande exclusivo. Confirme sua presença e agende uma reunião com nossos especialistas.",
-    date: "Mai 2026",
+    description:
+      "A Agrishow acontece em Ribeirão Preto. A RE/MAX AGRO estará presente com estande exclusivo. Confirme sua presença e agende uma reunião com nossos especialistas.",
+    date: "Mai–Jun 2026",
     urgency: "evento",
   },
 ];
 
-export const sidebarHighlights = [
-  {
-    id: 1,
-    label: "PROPRIEDADE EM DESTAQUE",
-    title: "Fazenda Santa Luzia — 4.200 ha",
-    subtitle: "Soja + Milho · Mato Grosso",
-    detail: "Produtividade acima da média regional. Infraestrutura completa. Oportunidade de investimento.",
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&h=280&q=80",
-    badge: "NOVO",
-    badgeColor: "bg-emerald-500",
-  },
-];
+// ── Corretores ─────────────────────────────────────────────────────────────────
 
 export const brokers = [
   {
@@ -426,7 +161,6 @@ export const brokers = [
     name: "Carlos Mendonça",
     role: "Especialista em Grandes Propriedades",
     region: "Mato Grosso & Pará",
-    avatar: "https://images.unsplash.com/photo-1607544836359-7603ef1d3c4c?auto=format&fit=crop&w=120&h=120&q=80",
     whatsapp: "+5565999990001",
   },
   {
@@ -434,7 +168,6 @@ export const brokers = [
     name: "Ana Paula Ferreira",
     role: "Consultora de Investimentos Rurais",
     region: "Goiás & Tocantins",
-    avatar: "https://images.unsplash.com/photo-1664039957602-314a85d60f46?auto=format&fit=crop&w=120&h=120&q=80",
     whatsapp: "+5562999990002",
   },
   {
@@ -442,7 +175,6 @@ export const brokers = [
     name: "Roberto Alves",
     role: "Especialista em Agronegócio",
     region: "São Paulo & Paraná",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80",
     whatsapp: "+5511999990003",
   },
   {
@@ -450,7 +182,6 @@ export const brokers = [
     name: "Mariana Costa",
     role: "Analista de Mercado de Terras",
     region: "Bahia & Piauí",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80",
     whatsapp: "+5571999990004",
   },
 ];

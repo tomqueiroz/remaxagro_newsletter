@@ -32,7 +32,7 @@ export default function NewsHighlights() {
               Última Semana
             </span>
             <span className="text-[#9a9a9a] text-xs font-medium">
-              27 – 30 Abr 2026
+              25 – 29 Mai 2026
             </span>
           </div>
           <h2
@@ -52,6 +52,13 @@ export default function NewsHighlights() {
       </div>
 
       {/* ── Cards em destaque (top 6, com imagem) ─────────────────── */}
+      {mainNews.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center text-[#9a9a9a] mb-10">
+          <i className="ri-newspaper-line text-4xl mb-3 text-[#C9A84C]" />
+          <p className="text-base font-semibold text-[#0F2A1A]">Nenhuma notícia em destaque nesta edição.</p>
+          <p className="text-sm mt-1">As notícias da semana estão disponíveis na seção abaixo.</p>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {mainNews.map((news, idx) => (
           <a
@@ -119,6 +126,7 @@ export default function NewsHighlights() {
           </a>
         ))}
       </div>
+      )}
 
       {/* ── Mais Notícias da Semana ────────────────────────────────── */}
       <div className="bg-white rounded-2xl border border-[#e8e0d0] overflow-hidden shadow-sm">
@@ -131,13 +139,19 @@ export default function NewsHighlights() {
             </p>
           </div>
           <span className="text-white/50 text-xs">
-            {secondaryNews.length} notícias
+            {secondaryNews.length} {secondaryNews.length === 1 ? 'notícia' : 'notícias'}
           </span>
         </div>
 
         {/* Lista */}
         <div className="divide-y divide-[#f0ebe0]">
-          {secondaryNews.map((news) => (
+          {secondaryNews.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center text-[#9a9a9a]">
+              <i className="ri-inbox-line text-3xl mb-2 text-[#C9A84C]" />
+              <p className="text-sm font-medium text-[#0F2A1A]">Sem notícias adicionais nesta edição.</p>
+            </div>
+          ) : (
+          <>{secondaryNews.map((news) => (
             <a
               key={news.id}
               href={news.url}
@@ -175,7 +189,7 @@ export default function NewsHighlights() {
                 </span>
               </div>
             </a>
-          ))}
+          ))}</>)}
         </div>
 
         {/* Rodapé da lista */}
