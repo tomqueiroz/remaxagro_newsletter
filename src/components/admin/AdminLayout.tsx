@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Newspaper, Users, Eye, TrendingUp, LogOut, BookOpen } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Newspaper, Users, Eye, TrendingUp, LogOut } from 'lucide-react';
 import { signOut } from '@/lib/adminApi';
 import { Button } from '@/components/ui/button';
 
@@ -15,8 +15,8 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { id: 'cms', label: 'CMS Newsletter', icon: BookOpen, path: '/admin/cms' },
-    { id: 'noticias', label: 'Notícias (legacy)', icon: Newspaper, path: '/admin/noticias' },
+    { id: 'cms', label: 'CMS — Notícias', icon: Newspaper, path: '/admin/cms' },
+    { id: 'noticias', label: 'Notícias (Legado)', icon: Newspaper, path: '/admin/noticias' },
     { id: 'leads', label: 'Leads', icon: Users, path: '/admin/leads' },
     { id: 'acessos', label: 'Acessos', icon: Eye, path: '/admin/acessos' },
     { id: 'performance', label: 'Performance', icon: TrendingUp, path: '/admin/performance' },

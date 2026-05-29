@@ -1,4 +1,4 @@
-// v2026-05-29c - CMS newsletter deploy
+// v2026-05-29b
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'

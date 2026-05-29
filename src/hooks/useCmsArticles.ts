@@ -1,24 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { CmsArticle } from '@/lib/cmsTypes';
-import { CMS_TABLE } from '@/lib/cmsTypes';
+import { CmsArticle, CMS_TABLE } from '@/lib/cmsTypes';
 
 interface UseCmsArticlesOptions {
   editionDate?: string;
+  highlightOnly?: boolean;
   limit?: number;
-  onlyPublished?: boolean;
 }
 
-interface UseCmsArticlesReturn {
+interface UseCmsArticlesResult {
   articles: CmsArticle[];
-  highlights: CmsArticle[];
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
-export function useCmsArticles(options: UseCmsArticlesOptions = {}): UseCmsArticlesReturn {
-  const { editionDate = '2026-05-29', limit = 50, onlyPublished = true } = options;
+export function useCmsArticles(options: UseCmsArticlesOptions = {}): UseCmsArticlesResult {
+  const { editionDate = '2026-05-29', highlightOnly = false, limit } = options;
   const [articles, setArticles] = useState<CmsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,39 +29,70 @@ export function useCmsArticles(options: UseCmsArticlesOptions = {}): UseCmsArtic
         .from(CMS_TABLE)
         .select('*')
         .eq('edition_date', editionDate)
-        .order('is_highlight', { ascending: false })
+        .eq('is_published', true)
         .order('news_date', { ascending: false })
-        .limit(limit);
+        .order('created_at', { ascending: false });
 
-      if (onlyPublished) {
-        query = query.eq('is_published', true);
+      if (highlightOnly) {
+        query = query.eq('is_highlight', true);
+      }
+      if (limit) {
+        query = query.limit(limit);
       }
 
-      const { data, error: fetchError } = await query;
-      if (fetchError) throw fetchError;
-      setArticles((data as CmsArticle[]) ?? []);
+      const { data, error: sbError } = await query;
+      if (sbError) throw sbError;
+      setArticles((data as CmsArticle[]) || []);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro ao carregar notícias';
-      setError(msg);
-      console.error('[useCmsArticles] error:', err);
+      console.error('Error fetching CMS articles:', err);
+      setError('Não foi possível carregar as notícias.');
+      setArticles([]);
     } finally {
       setLoading(false);
     }
-  }, [editionDate, limit, onlyPublished]);
+  }, [editionDate, highlightOnly, limit]);
 
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
 
-  const highlights = articles.filter(a => a.is_highlight);
-
-  return { articles, highlights, loading, error, refetch: fetchArticles };
+  return { articles, loading, error, refetch: fetchArticles };
 }
 
-export async function incrementArticleView(slug: string): Promise<void> {
+// Admin: fetch all articles (including unpublished)
+export async function fetchAllArticlesAdmin(): Promise<CmsArticle[]> {
+  const { data, error } = await supabase
+    .from(CMS_TABLE)
+    .select('*')
+    .order('news_date', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data as CmsArticle[]) || [];
+}
+
+// Admin: update article
+export async function updateArticle(id: string, updates: Partial<CmsArticle>): Promise<void> {
+  const { error } = await supabase.from(CMS_TABLE).update(updates).eq('id', id);
+  if (error) throw error;
+}
+
+// Admin: delete article
+export async function deleteArticle(id: string): Promise<void> {
+  const { error } = await supabase.from(CMS_TABLE).delete().eq('id', id);
+  if (error) throw error;
+}
+
+// Admin: insert article
+export async function insertArticle(article: Omit<CmsArticle, 'id' | 'created_at' | 'updated_at' | 'view_count'>): Promise<void> {
+  const { error } = await supabase.from(CMS_TABLE).insert([article]);
+  if (error) throw error;
+}
+
+// Increment view count
+export async function incrementViewCount(id: string): Promise<void> {
   try {
-    await supabase.rpc('increment_article_views', { article_slug: slug });
+    await supabase.rpc('increment_article_view', { article_id: id });
   } catch {
-    // non-critical, silent fail
+    // silently fail
   }
 }

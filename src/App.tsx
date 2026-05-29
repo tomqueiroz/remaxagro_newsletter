@@ -16,8 +16,8 @@ export default function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/leads" element={<AdminLeads />} />
-        <Route path="/admin/cms" element={<AdminCMS />} />
         <Route path="/admin/noticias" element={<AdminNews />} />
+        <Route path="/admin/cms" element={<AdminCMS />} />
         <Route path="/admin/performance" element={<AdminPerformance />} />
         <Route path="/admin/acessos" element={<AdminViews />} />
         <Route path="*" element={<Navigate to="/" replace />} />
