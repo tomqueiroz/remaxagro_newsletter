@@ -11,6 +11,7 @@ export const IMAGES = {
   AGRO_TECH_8: "https://images.unsplash.com/photo-1714177236333-37da9d520bf5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDU2OTd8MHwxfHNlYXJjaHw2fHxhZ3JpYnVzaW5lc3MlMjB0ZWNobm9sb2d5JTIwcHJlY2lzaW9uJTIwZmFybWluZyUyMHRyYWN0b3IlMjBtb2Rlcm58ZW58MHwwfHx8MTc3NjU1MzY4OHww&ixlib=rb-4.1.0&q=80&w=1080",
   CAPTURA_DE_TELA7755_96: "/images/Captura de tela7755.png",
   COTACAO_AGRO_MODELO_95: "/images/cotacao agro modelo.jpeg",
+  COTA_O_TESTE_REMAX_29MAIO_97: "/images/cotação teste remax 29maio.jpeg",
   HERO_FIELD_1: "https://images.unsplash.com/photo-1627842822558-c1f15aef9838?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4Mzc5NTV8MHwxfHNlYXJjaHwxfHx3aGVhdCUyMGZpZWxkJTIwc3Vuc2V0JTIwYWVyaWFsJTIwZHJvbmUlMjBmYXJtbGFuZCUyMGdvbGRlbnxlbnwwfDB8fHwxNzc2NTUzNjg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
   HERO_FIELD_10: "https://images.unsplash.com/photo-1776158830532-9b546224cb23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4Mzc5NTV8MHwxfHNlYXJjaHwxMHx8d2hlYXQlMjBmaWVsZCUyMHN1bnNldCUyMGFlcmlhbCUyMGRyb25lJTIwZmFybWxhbmQlMjBnb2xkZW58ZW58MHwwfHx8MTc3NjU1MzY4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
   HERO_FIELD_2: "https://images.unsplash.com/photo-1735340208584-cfe49c87cd3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4Mzc5NTV8MHwxfHNlYXJjaHwyfHx3aGVhdCUyMGZpZWxkJTIwc3Vuc2V0JTIwYWVyaWFsJTIwZHJvbmUlMjBmYXJtbGFuZCUyMGdvbGRlbnxlbnwwfDB8fHwxNzc2NTUzNjg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
