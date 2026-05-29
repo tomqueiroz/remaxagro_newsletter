@@ -4,7 +4,6 @@ import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminLeads from "@/pages/AdminLeads";
 import AdminNews from "@/pages/AdminNews";
-import AdminCMS from "@/pages/AdminCMS";
 import AdminPerformance from "@/pages/AdminPerformance";
 import AdminViews from "@/pages/AdminViews";
 
@@ -17,7 +16,6 @@ export default function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/leads" element={<AdminLeads />} />
         <Route path="/admin/noticias" element={<AdminNews />} />
-        <Route path="/admin/cms" element={<AdminCMS />} />
         <Route path="/admin/performance" element={<AdminPerformance />} />
         <Route path="/admin/acessos" element={<AdminViews />} />
         <Route path="*" element={<Navigate to="/" replace />} />

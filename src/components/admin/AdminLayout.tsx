@@ -15,8 +15,7 @@ export default function AdminLayout({ children, activePage }: AdminLayoutProps) 
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { id: 'cms', label: 'CMS — Notícias', icon: Newspaper, path: '/admin/cms' },
-    { id: 'noticias', label: 'Notícias (Legado)', icon: Newspaper, path: '/admin/noticias' },
+    { id: 'noticias', label: 'Notícias (CMS)', icon: Newspaper, path: '/admin/noticias' },
     { id: 'leads', label: 'Leads', icon: Users, path: '/admin/leads' },
     { id: 'acessos', label: 'Acessos', icon: Eye, path: '/admin/acessos' },
     { id: 'performance', label: 'Performance', icon: TrendingUp, path: '/admin/performance' },

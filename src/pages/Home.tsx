@@ -2,14 +2,12 @@ import NewsletterHeader from "@/components/newsletter/NewsletterHeader";
 import HeroIntro from "@/components/newsletter/HeroIntro";
 import QuotationsPanel from "@/components/newsletter/QuotationsPanel";
 import NewsHighlights from "@/components/newsletter/NewsHighlights";
-import WeeklyNewsCMS from "@/components/newsletter/WeeklyNewsCMS";
 import InsightsForecast from "@/components/newsletter/InsightsForecast";
 import BrokersTeam from "@/components/newsletter/BrokersTeam";
 import SubscribeSection from "@/components/newsletter/SubscribeSection";
 import NewsletterFooter from "@/components/newsletter/NewsletterFooter";
 import LGPDConsentBanner from "@/components/newsletter/LGPDConsentBanner";
 import ExitIntentPopup from "@/components/newsletter/ExitIntentPopup";
-import FirstClickPopup from "@/components/newsletter/FirstClickPopup";
 
 export default function Home() {
   return (
@@ -26,7 +24,6 @@ export default function Home() {
         {/* Conteúdo full-width */}
         <div className="space-y-10">
           <NewsHighlights />
-          <WeeklyNewsCMS />
           <InsightsForecast />
           <BrokersTeam />
           <SubscribeSection />
@@ -36,7 +33,6 @@ export default function Home() {
       <NewsletterFooter />
       <LGPDConsentBanner />
       <ExitIntentPopup />
-      <FirstClickPopup />
     </div>
   );
 }
