@@ -68,12 +68,8 @@ export default function BrokersTeam() {
                 className="bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all duration-200 cursor-pointer group"
               >
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-[#C9A84C]/30 group-hover:border-[#C9A84C] transition-colors">
-                    <img
-                      src={broker.avatar}
-                      alt={broker.name}
-                      className="w-full h-full object-cover object-top"
-                    />
+                  <div className="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-[#C9A84C]/30 group-hover:border-[#C9A84C] transition-colors flex items-center justify-center bg-[#C9A84C]/20">
+                    <i className="ri-user-3-line text-2xl text-[#C9A84C]" />
                   </div>
                   <h3 className="text-white font-bold text-sm leading-snug mb-0.5">{broker.name}</h3>
                   <p className="text-[#C9A84C] text-xs mb-1">{broker.role}</p>
