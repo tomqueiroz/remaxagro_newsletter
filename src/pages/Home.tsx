@@ -2,7 +2,6 @@ import NewsletterHeader from "@/components/newsletter/NewsletterHeader";
 import HeroIntro from "@/components/newsletter/HeroIntro";
 import QuotationsPanel from "@/components/newsletter/QuotationsPanel";
 import NewsHighlights from "@/components/newsletter/NewsHighlights";
-import WeeklyNews from "@/components/newsletter/WeeklyNews";
 import InsightsForecast from "@/components/newsletter/InsightsForecast";
 import BrokersTeam from "@/components/newsletter/BrokersTeam";
 import SubscribeSection from "@/components/newsletter/SubscribeSection";
@@ -23,15 +22,8 @@ export default function Home() {
         </div>
 
         {/* Conteúdo full-width */}
-        <div className="space-y-14">
-          {/* Destaques principais da semana (6 cards + lista) */}
+        <div className="space-y-10">
           <NewsHighlights />
-
-          {/* Nova seção: Notícias da Semana por dia com pop-up CMS */}
-          <div className="border-t border-[#e8e0d0] pt-10">
-            <WeeklyNews />
-          </div>
-
           <InsightsForecast />
           <BrokersTeam />
           <SubscribeSection />
